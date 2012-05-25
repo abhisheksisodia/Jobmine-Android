@@ -31,9 +31,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
 
-public class JobDetails extends SherlockActivity {
+public class JobDetails extends Activity {
 
 	SharedPreferences settings;
 	String title;
@@ -177,3 +176,4 @@ public class JobDetails extends SherlockActivity {
 
 	
 }
+

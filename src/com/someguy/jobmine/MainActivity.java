@@ -1,72 +1,47 @@
 package com.someguy.jobmine;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View.OnTouchListener;
-
 import android.view.View;
-
-import android.webkit.CookieManager;
-import android.webkit.WebView;
+import android.view.View.OnTouchListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MainActivity extends SherlockActivity {
+public class MainActivity extends Activity {
 	/** Called when the activity is first created. */
 	public static String userName = "";
 	public static String pwd = "";
@@ -294,8 +269,8 @@ public class MainActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		//getSupportActionBar().setDisplayShowHomeEnabled(false);
+		//getSupportActionBar().setDisplayShowTitleEnabled(true);
 		settings = new EncryptedSharedPreferences( 
 			    this, this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) );
 		editor = settings.edit();
@@ -391,8 +366,8 @@ public class MainActivity extends SherlockActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		 MenuInflater inflater = getSupportMenuInflater();
-		   inflater.inflate(R.menu.options, menu);
+		 MenuInflater inflater = getMenuInflater(); 
+		 inflater.inflate(R.menu.options, menu);
 	    return true;
 	}
 
