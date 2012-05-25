@@ -11,6 +11,8 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
+        public static final int amber=0x7f040005;
+        public static final int blue=0x7f040004;
         public static final int green=0x7f040002;
         public static final int grey=0x7f040000;
         public static final int red=0x7f040001;
@@ -21,26 +23,27 @@ public final class R {
     }
     public static final class id {
         public static final int TextView01=0x7f070000;
-        public static final int appstatus=0x7f07000a;
+        public static final int appstatus=0x7f07000b;
         public static final int checkBox1=0x7f070004;
         public static final int checkBox2=0x7f070005;
+        public static final int checkBox3=0x7f070007;
         public static final int checkBox4=0x7f070006;
-        public static final int description=0x7f07000d;
-        public static final int employer=0x7f070008;
-        public static final int filter=0x7f070014;
-        public static final int jobstatus=0x7f070009;
-        public static final int linearlayout1=0x7f070012;
-        public static final int logout=0x7f070015;
+        public static final int description=0x7f07000e;
+        public static final int employer=0x7f070009;
+        public static final int filter=0x7f070015;
+        public static final int jobstatus=0x7f07000a;
+        public static final int linearlayout1=0x7f070013;
+        public static final int logout=0x7f070016;
         public static final int password1=0x7f070003;
-        public static final int refresh=0x7f070013;
-        public static final int resumes=0x7f07000b;
-        public static final int scrollView1=0x7f07000c;
+        public static final int refresh=0x7f070014;
+        public static final int resumes=0x7f07000c;
+        public static final int scrollView1=0x7f07000d;
         public static final int textView1=0x7f070002;
-        public static final int textView2=0x7f07000f;
-        public static final int textView3=0x7f070010;
-        public static final int textView4=0x7f070011;
-        public static final int textView5=0x7f07000e;
-        public static final int title=0x7f070007;
+        public static final int textView2=0x7f070010;
+        public static final int textView3=0x7f070011;
+        public static final int textView4=0x7f070012;
+        public static final int textView5=0x7f07000f;
+        public static final int title=0x7f070008;
         public static final int username1=0x7f070001;
     }
     public static final class layout {

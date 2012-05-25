@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
-import android.provider.Settings.System;
 import android.util.Base64;
 
 public class EncryptedSharedPreferences implements SharedPreferences {
