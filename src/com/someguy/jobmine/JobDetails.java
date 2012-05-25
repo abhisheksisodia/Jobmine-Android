@@ -28,9 +28,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockActivity;
 
-public class JobDetails extends SherlockActivity {
+public class JobDetails extends Activity {
 
 	SharedPreferences settings;
 	String title;
