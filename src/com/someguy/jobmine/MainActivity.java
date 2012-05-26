@@ -44,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jobmine.common.JobmineAlarmManager;
 import com.jobmine.common.Logger;
 import com.jobmine.service.JobmineInterface;
 import com.jobmine.service.JobmineService;
@@ -98,16 +99,13 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-	private void startJobmineService () {
+	private void bindToJobmineService () {
 		Intent i = new Intent (JobmineService.class.getName());
-		
-		startService(i);
 		bindService(i, serviceConnection, Activity.BIND_AUTO_CREATE);
 	}
 	
-	private void unbindFromService () {
+	private void unbindFromJobmineService () {
 		Intent i = new Intent (JobmineService.class.getName());
-		
 		unbindService(serviceConnection);
 	}
     
@@ -315,7 +313,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		startJobmineService ();
+		JobmineAlarmManager.setAlarm(this, 60*60);
 		
 		//getSupportActionBar().setDisplayShowHomeEnabled(false);
 		//getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -336,10 +334,10 @@ public class MainActivity extends Activity {
 		
 	}
 	
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unbindFromService ();
 	}
 
 
@@ -416,6 +414,14 @@ public class MainActivity extends Activity {
 				createDialog();
 			}
 		}
+		
+		bindToJobmineService();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unbindFromJobmineService();
 	}
 
 	@Override
