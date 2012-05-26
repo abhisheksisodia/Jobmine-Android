@@ -14,6 +14,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.jobmine.common.Constants;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -96,8 +98,8 @@ public class JobDetails extends Activity {
 
 	private void getJobInfo() {
 		
-		String userName = settings.getString(MainActivity.userNameKey, "");
-		String pwd = settings.getString(MainActivity.pwdKey, "");
+		String userName = settings.getString(Constants.userNameKey, "");
+		String pwd = settings.getString(Constants.pwdKey, "");
 		
 		try {
 			
@@ -139,15 +141,15 @@ public class JobDetails extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.job_details);
 		
-		title = getIntent().getStringExtra(MainActivity.titleKey);
-		id = getIntent().getStringExtra(MainActivity.idKey);
-		employer = getIntent().getStringExtra(MainActivity.employerKey);
-		jobStatus = getIntent().getStringExtra(MainActivity.jobStatusKey);
-		appStatus = getIntent().getStringExtra(MainActivity.appStatusKey);
-		resumes = getIntent().getStringExtra(MainActivity.resumeKey);
+		title = getIntent().getStringExtra(Constants.titleKey);
+		id = getIntent().getStringExtra(Constants.idKey);
+		employer = getIntent().getStringExtra(Constants.employerKey);
+		jobStatus = getIntent().getStringExtra(Constants.jobStatusKey);
+		appStatus = getIntent().getStringExtra(Constants.appStatusKey);
+		resumes = getIntent().getStringExtra(Constants.resumeKey);
 		
 		settings = new EncryptedSharedPreferences( 
-			    this, this.getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE) );
+			    this, this.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE) );
 	
 		titleView = (TextView)findViewById(R.id.title);
 		employerView = (TextView)findViewById(R.id.employer);
