@@ -16,16 +16,20 @@ import org.jsoup.select.Elements;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +43,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jobmine.common.Logger;
+import com.jobmine.service.JobmineInterface;
+import com.jobmine.service.JobmineService;
 
 
 public class MainActivity extends Activity {
@@ -64,6 +72,44 @@ public class MainActivity extends Activity {
 	public static final String jobStatusKey = "jobstatuskey";
 	public static final String appStatusKey = "appstatuskey";
 	public static final String resumeKey = "resumekey";
+	
+	
+	private JobmineInterface serverInterface = null;
+	
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			serverInterface = JobmineInterface.Stub.asInterface(service);
+			
+			try {
+				serverInterface.go();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Logger.d ("Client onServiceConnected() was called");
+		}
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Logger.d ("Client onServiceDisconnected() was called");
+		}
+	};
+	
+	private void startJobmineService () {
+		Intent i = new Intent (JobmineService.class.getName());
+		
+		startService(i);
+		bindService(i, serviceConnection, Activity.BIND_AUTO_CREATE);
+	}
+	
+	private void unbindFromService () {
+		Intent i = new Intent (JobmineService.class.getName());
+		
+		unbindService(serviceConnection);
+	}
     
 	public boolean getJobmine() {
 
@@ -269,6 +315,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		startJobmineService ();
+		
 		//getSupportActionBar().setDisplayShowHomeEnabled(false);
 		//getSupportActionBar().setDisplayShowTitleEnabled(true);
 		settings = new EncryptedSharedPreferences( 
@@ -286,6 +334,12 @@ public class MainActivity extends Activity {
 		displayNotSelected = settings.getBoolean(notSelectedKey, true);
 		displayRanked = settings.getBoolean(rankedKey, true);
 		
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unbindFromService ();
 	}
 
 
