@@ -1,6 +1,5 @@
 package com.someguy.jobmine;
 
-
 public class Job {
 	String title = "";
 	String id = "";
