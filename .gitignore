@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 bin/*
-=======
-bin/
->>>>>>> newbranch
 *.class
 *.apk
 *.dex
