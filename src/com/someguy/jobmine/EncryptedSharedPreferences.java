@@ -86,13 +86,6 @@ public class EncryptedSharedPreferences implements SharedPreferences {
             delegate.remove(s);
             return this;
         }
-
-		@Override
-		public Editor putStringSet(
-				String arg0, Set<String> arg1) {
-			delegate.putStringSet(arg0, arg1);
-			return this;
-		}
     }
 
     public Editor edit() {
@@ -182,11 +175,4 @@ public class EncryptedSharedPreferences implements SharedPreferences {
             throw new RuntimeException(e);
         }
     }
-
-
-	@Override
-	public Set<String> getStringSet(String arg0, Set<String> arg1) {
-		// TODO Implement this for when it might be useful
-		 throw new UnsupportedOperationException();
-	}
 }
