@@ -45,8 +45,19 @@ return true;
 case TRANSACTION_getApplications:
 {
 data.enforceInterface(DESCRIPTOR);
-this.getApplications();
+java.util.List<com.jobmine.models.Job> _result = this.getApplications();
 reply.writeNoException();
+reply.writeTypedList(_result);
+return true;
+}
+case TRANSACTION_getJobDescription:
+{
+data.enforceInterface(DESCRIPTOR);
+java.lang.String _arg0;
+_arg0 = data.readString();
+java.lang.String _result = this.getJobDescription(_arg0);
+reply.writeNoException();
+reply.writeString(_result);
 return true;
 }
 }
@@ -67,22 +78,45 @@ public java.lang.String getInterfaceDescriptor()
 {
 return DESCRIPTOR;
 }
-public void getApplications() throws android.os.RemoteException
+public java.util.List<com.jobmine.models.Job> getApplications() throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
+java.util.List<com.jobmine.models.Job> _result;
 try {
 _data.writeInterfaceToken(DESCRIPTOR);
 mRemote.transact(Stub.TRANSACTION_getApplications, _data, _reply, 0);
 _reply.readException();
+_result = _reply.createTypedArrayList(com.jobmine.models.Job.CREATOR);
 }
 finally {
 _reply.recycle();
 _data.recycle();
 }
+return _result;
+}
+public java.lang.String getJobDescription(java.lang.String jobId) throws android.os.RemoteException
+{
+android.os.Parcel _data = android.os.Parcel.obtain();
+android.os.Parcel _reply = android.os.Parcel.obtain();
+java.lang.String _result;
+try {
+_data.writeInterfaceToken(DESCRIPTOR);
+_data.writeString(jobId);
+mRemote.transact(Stub.TRANSACTION_getJobDescription, _data, _reply, 0);
+_reply.readException();
+_result = _reply.readString();
+}
+finally {
+_reply.recycle();
+_data.recycle();
+}
+return _result;
 }
 }
 static final int TRANSACTION_getApplications = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_getJobDescription = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
 }
-public void getApplications() throws android.os.RemoteException;
+public java.util.List<com.jobmine.models.Job> getApplications() throws android.os.RemoteException;
+public java.lang.String getJobDescription(java.lang.String jobId) throws android.os.RemoteException;
 }

@@ -1,12 +1,12 @@
-package com.someguy.jobmine;
+package com.jobmine.common;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,11 +16,55 @@ import org.jsoup.select.Elements;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.jobmine.common.Constants;
+import com.jobmine.models.Job;
 
-public class Common {
+public class JobmineNetworkRequest {
 	private static String userName;
 	private static String pwd;
+	
+	public static String getJobDescription (Context context, String jobId) {
+		
+		String descriptionText = "";
+		
+		if (userName == null || userName.isEmpty()) {
+			//Set username/password
+			SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+			setUserName(settings.getString(Constants.userNameKey, ""));
+			setPassword(settings.getString(Constants.pwdKey, ""));
+		}
+		
+		try {
+			
+			DefaultHttpClient client = new DefaultHttpClient();
+			
+			HttpPost post = new HttpPost(
+					"https://jobmine.ccol.uwaterloo.ca/psp/SS/?cmd=login&"
+							+ "userid=" + userName + "&" + "pwd=" + pwd + "&" + "submit=Submit");
+			
+			HttpResponse resp = client.execute(post);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			resp.getEntity().writeTo(stream);
+
+			post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_JOBDTLS?UW_CO_JOB_ID="+jobId);
+			resp = client.execute(post);
+			stream = new ByteArrayOutputStream();
+			resp.getEntity().writeTo(stream);
+			Document table = Jsoup.parse(new String(stream.toByteArray()));
+			Element description = table.getElementById("UW_CO_JOBDTL_VW_UW_CO_JOB_DESCR");
+			descriptionText = description.html(); 
+			post = new HttpPost(
+					"https://jobmine.ccol.uwaterloo.ca/psp/SS/EMPLOYEE/WORK/?cmd=logout");
+			client.execute(post);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return descriptionText;
+	}
 	
 	public static ArrayList<Job> getJobmine (Context context) {
 		
@@ -42,9 +86,9 @@ public class Common {
 		ArrayList<String> job = new ArrayList<String>();
 
 		DefaultHttpClient client = new DefaultHttpClient();
-		List<Cookie> a = client.getCookieStore().getCookies();
 
 		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psp/SS/?cmd=login&" + "userid=" + userName + "&" + "pwd=" + pwd + "&" + "submit=Submit");
+		
 		try {
 			HttpResponse resp = client.execute(post);
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();

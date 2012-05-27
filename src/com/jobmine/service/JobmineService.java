@@ -1,16 +1,17 @@
 package com.jobmine.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.common.Logger;
-import com.jobmine.providers.JobmineContentProvider;
-import com.someguy.jobmine.Common;
-import com.someguy.jobmine.Job;
+import com.jobmine.models.Job;
+import com.jobmine.providers.JobmineProvider;
 
 public class JobmineService extends Service {
 
@@ -19,15 +20,37 @@ public class JobmineService extends Service {
 	private JobmineInterface.Stub serviceInterface = new JobmineInterface.Stub() {
 
 		@Override
-		public void getApplications () throws RemoteException {
-			ArrayList<Job> jobs = Common.getJobmine(JobmineService.this);
+		public List<Job> getApplications () throws RemoteException {
+			ArrayList<Job> jobs = JobmineNetworkRequest.getJobmine(JobmineService.this);
 			
 			if (jobs != null && jobs.size() > 0) {
-				JobmineContentProvider.deleteAll(getContentResolver());
-				JobmineContentProvider.addApplications(jobs, getContentResolver());
+				JobmineProvider.deleteAll(getContentResolver());
+				JobmineProvider.addApplications(jobs, getContentResolver());
+			}
+			
+			return jobs;
+		}
+
+		@Override
+		public String getJobDescription (String jobId) throws RemoteException {
+			Job j = JobmineProvider.getApplication(jobId, getContentResolver());
+			
+			if (j == null) {
+				return "";	
+				
+			} else if (j.description.isEmpty()) {
+				//Make network request
+				String description = JobmineNetworkRequest.getJobDescription (JobmineService.this, jobId);
+	
+				//Update database and return 
+				JobmineProvider.updateJobDescription(jobId, description, getContentResolver());
+				return description;
+				
+			} else {
+				return j.description;
 			}
 		}
-		
+
 	};
 	
 	@Override

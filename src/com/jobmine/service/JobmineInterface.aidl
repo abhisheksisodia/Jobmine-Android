@@ -1,5 +1,8 @@
 package com.jobmine.service;
 
+import com.jobmine.models.Job;
+
 interface JobmineInterface {
-	void getApplications ();
+	List<Job> getApplications ();
+	String getJobDescription (String jobId);
 }

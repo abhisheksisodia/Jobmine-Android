@@ -17,6 +17,7 @@ public class JobmineProviderConstants {
 		public static final String JOB_STATUS = "job_status";
 		public static final String APP_STATUS = "app_staus";
 		public static final String RESUMES = "resumes";
+		public static final String JOB_DESCRIPTION = "job_description";
 	}
 	
 	public static final String [] DEFAULT_PROJECTION = new String [] {
@@ -27,7 +28,8 @@ public class JobmineProviderConstants {
 		Columns.JOB,
 		Columns.JOB_STATUS,
 		Columns.APP_STATUS,
-		Columns.RESUMES
+		Columns.RESUMES,
+		Columns.JOB_DESCRIPTION
 	};
-	
+
 }

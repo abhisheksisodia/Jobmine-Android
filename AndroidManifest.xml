@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         
-        <activity android:name="JobDetails" 
+        <activity android:name=".JobDetailsActivity" 
             	  android:screenOrientation="portrait"></activity>
         
         <service
@@ -37,7 +37,7 @@
         </service>
         
         <provider
-            android:name="com.jobmine.providers.JobmineContentProvider"
+            android:name="com.jobmine.providers.JobmineProvider"
             android:authorities="com.jobmine.providers.JobmineContentProvider" />
         
         <receiver android:name="com.jobmine.service.StartupReceiver">

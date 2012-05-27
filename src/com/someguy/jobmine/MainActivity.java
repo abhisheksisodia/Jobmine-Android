@@ -5,20 +5,16 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,44 +30,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jobmine.common.Constants;
-import com.jobmine.common.Logger;
+import com.jobmine.common.EncryptedSharedPreferences;
+import com.jobmine.common.JobmineNetworkRequest;
+import com.jobmine.models.Job;
+import com.jobmine.providers.JobmineProvider;
 import com.jobmine.service.JobmineAlarmManager;
-import com.jobmine.service.JobmineInterface;
-import com.jobmine.service.JobmineService;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BindingActivity {
 	/** Called when the activity is first created. */
 	ListView mListView;
 	boolean displayApplied, displaySelected, displayNotSelected, displayRanked;
 	ArrayList<Job> jobies;
 	SharedPreferences settings;
 	Editor editor;
-
-	private JobmineInterface serverInterface = null;
-
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			serverInterface = JobmineInterface.Stub.asInterface(service);
-			Logger.d("Client onServiceConnected() was called");
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			Logger.d("Client onServiceDisconnected() was called");
-		}
-	};
-
-	private void bindToJobmineService () {
-		Intent i = new Intent (JobmineService.class.getName());
-		bindService(i, serviceConnection, Activity.BIND_AUTO_CREATE);
-	}
-	
-	private void unbindFromJobmineService () {
-		Intent i = new Intent (JobmineService.class.getName());
-		unbindService(serviceConnection);
-	}
 
 	public class getData extends AsyncTask<Void, Void, ArrayList<Job>> {
 
@@ -87,7 +58,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			dialog = ProgressDialog.show(activity, "", "Loading...", true, true);
+			dialog = ProgressDialog.show(activity, "", "Loading...", true, false);
 			dialog.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
@@ -101,7 +72,12 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected ArrayList<Job> doInBackground(Void... arg0) {
-			return Common.getJobmine(activity);
+			ArrayList<Job> jobs = JobmineNetworkRequest.getJobmine(activity);
+			
+			//Insert into content provider
+			JobmineProvider.updateOrInsertApplications(jobs, getContentResolver());
+			
+			return jobs;
 		}
 
 		@Override
@@ -155,13 +131,8 @@ public class MainActivity extends Activity {
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						if (event.getAction() == MotionEvent.ACTION_UP) {
-							Intent intent = new Intent(MainActivity.this, JobDetails.class);
-							intent.putExtra(Constants.titleKey, job.title);
+							Intent intent = new Intent(MainActivity.this, JobDetailsActivity.class);
 							intent.putExtra(Constants.idKey, job.id);
-							intent.putExtra(Constants.employerKey, job.emplyer);
-							intent.putExtra(Constants.jobStatusKey, job.jobStatus);
-							intent.putExtra(Constants.appStatusKey, job.appStatus);
-							intent.putExtra(Constants.resumeKey, job.resumes);
 							startActivity(intent);
 						}
 						return true;
@@ -211,8 +182,8 @@ public class MainActivity extends Activity {
 				String passwordFieldContent = passwordField.getEditableText().toString();
 				String usernameFieldContent = usernameField.getEditableText().toString();
 
-				Common.setUserName(usernameFieldContent);
-				Common.setPassword(passwordFieldContent);
+				JobmineNetworkRequest.setUserName(usernameFieldContent);
+				JobmineNetworkRequest.setPassword(passwordFieldContent);
 				try {
 					editor.putString(Constants.userNameKey, usernameFieldContent);
 					editor.putString(Constants.pwdKey, passwordFieldContent);
@@ -250,8 +221,8 @@ public class MainActivity extends Activity {
 		} else {
 			if (settings.contains(Constants.userNameKey) && settings.contains(Constants.pwdKey)) {
 				try {
-					Common.setUserName(settings.getString(Constants.userNameKey, ""));
-					Common.setPassword(settings.getString(Constants.pwdKey, ""));
+					JobmineNetworkRequest.setUserName(settings.getString(Constants.userNameKey, ""));
+					JobmineNetworkRequest.setPassword(settings.getString(Constants.pwdKey, ""));
 					new getData(MainActivity.this).execute(new Void[3]);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -261,14 +232,6 @@ public class MainActivity extends Activity {
 				createDialog();
 			}
 		}
-		
-		bindToJobmineService ();
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unbindFromJobmineService();
 	}
 
 	@Override

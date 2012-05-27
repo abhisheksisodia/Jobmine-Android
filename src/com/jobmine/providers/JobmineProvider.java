@@ -14,27 +14,28 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 import com.jobmine.common.Logger;
-import com.someguy.jobmine.Job;
+import com.jobmine.models.Job;
 
-public class JobmineContentProvider extends ContentProvider {
+public class JobmineProvider extends ContentProvider {
 
 	private DatabaseHelper databaseHelper = null;
 
 	private class DatabaseHelper extends SQLiteOpenHelper {
 
 		private static final String DATABASE_NAME = "Jobmine.db";
-		private static final int DATABASE_VERSION = 1;
+		private static final int DATABASE_VERSION = 2;
 		
 		private static final String APPLICATIONS_TABLE_NAME = "Applications";
 		private static final String APPLICATIONS_CREATE_DATABASE_QUERY = "CREATE TABLE IF NOT EXISTS " + APPLICATIONS_TABLE_NAME + "("
 													+ JobmineProviderConstants.Columns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
 													+ JobmineProviderConstants.Columns.JOB_TITLE + " TEXT,"
-													+ JobmineProviderConstants.Columns.JOB_ID + " TEXT,"
+													+ JobmineProviderConstants.Columns.JOB_ID + " TEXT UNIQUE,"
 													+ JobmineProviderConstants.Columns.EMPLOYER + " TEXT,"
 													+ JobmineProviderConstants.Columns.JOB + " TEXT,"
 													+ JobmineProviderConstants.Columns.JOB_STATUS + " TEXT,"
 													+ JobmineProviderConstants.Columns.APP_STATUS + " TEXT,"
-													+ JobmineProviderConstants.Columns.RESUMES + " TEXT"
+													+ JobmineProviderConstants.Columns.RESUMES + " TEXT,"
+													+ JobmineProviderConstants.Columns.JOB_DESCRIPTION + " TEXT"
 													+ ")";
 
 		public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
@@ -49,7 +50,7 @@ public class JobmineContentProvider extends ContentProvider {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			db.execSQL("DROP TABLE IF EXISTS " + APPLICATIONS_CREATE_DATABASE_QUERY);
+			db.execSQL("DROP TABLE IF EXISTS " + APPLICATIONS_TABLE_NAME);
 			onCreate(db);
 		}
 
@@ -69,7 +70,7 @@ public class JobmineContentProvider extends ContentProvider {
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
-		int count = db.delete(DatabaseHelper.APPLICATIONS_TABLE_NAME, selection, selectionArgs);;
+		int count = db.delete(DatabaseHelper.APPLICATIONS_TABLE_NAME, selection, selectionArgs);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
 	}
@@ -118,23 +119,64 @@ public class JobmineContentProvider extends ContentProvider {
 		return count;
 	}
 	
-	public static void addApplications (ArrayList<Job> jobs, ContentResolver resolver) {
-		
-		if (jobs != null && jobs.size() > 0) {
-			ContentValues values[] = new ContentValues [jobs.size()];
-	
-			for (int i = 0; i < jobs.size(); i++) {
-				values[i] = new ContentValues();
-				values[i].put(JobmineProviderConstants.Columns.JOB_TITLE, jobs.get(i).title);
-				values[i].put(JobmineProviderConstants.Columns.JOB_ID, jobs.get(i).id);
-				values[i].put(JobmineProviderConstants.Columns.EMPLOYER, jobs.get(i).emplyer);
-				values[i].put(JobmineProviderConstants.Columns.JOB, jobs.get(i).job);
-				values[i].put(JobmineProviderConstants.Columns.JOB_STATUS, jobs.get(i).jobStatus);
-				values[i].put(JobmineProviderConstants.Columns.APP_STATUS, jobs.get(i).appStatus);
-				values[i].put(JobmineProviderConstants.Columns.RESUMES, jobs.get(i).resumes);
-			}
+	public static void addApplication (Job job, ContentResolver resolver) {
+		if (job != null) {
+			ContentValues values = new ContentValues ();
 			
-			resolver.bulkInsert(JobmineProviderConstants.CONTENT_URI, values);
+			values.put(JobmineProviderConstants.Columns.JOB_TITLE, job.title);
+			values.put(JobmineProviderConstants.Columns.JOB_ID, job.id);
+			values.put(JobmineProviderConstants.Columns.EMPLOYER, job.emplyer);
+			values.put(JobmineProviderConstants.Columns.JOB, job.job);
+			values.put(JobmineProviderConstants.Columns.JOB_STATUS, job.jobStatus);
+			values.put(JobmineProviderConstants.Columns.APP_STATUS, job.appStatus);
+			values.put(JobmineProviderConstants.Columns.RESUMES, job.resumes);
+			values.put(JobmineProviderConstants.Columns.JOB_DESCRIPTION, job.description);
+			
+			resolver.insert(JobmineProviderConstants.CONTENT_URI, values);
+		}
+	}
+	
+	public static int updateApplication (Job job, ContentResolver resolver) {
+		if (job != null) {
+			ContentValues values = new ContentValues ();
+			
+			values.put(JobmineProviderConstants.Columns.JOB_TITLE, job.title);
+			values.put(JobmineProviderConstants.Columns.JOB_ID, job.id);
+			values.put(JobmineProviderConstants.Columns.EMPLOYER, job.emplyer);
+			values.put(JobmineProviderConstants.Columns.JOB, job.job);
+			values.put(JobmineProviderConstants.Columns.JOB_STATUS, job.jobStatus);
+			values.put(JobmineProviderConstants.Columns.APP_STATUS, job.appStatus);
+			values.put(JobmineProviderConstants.Columns.RESUMES, job.resumes);
+			
+			return resolver.update(JobmineProviderConstants.CONTENT_URI, values, JobmineProviderConstants.Columns.JOB_ID + " = ?", new String [] { job.id });
+		}
+		
+		return 0;
+	}
+	
+	public static void addApplications (ArrayList<Job> jobs, ContentResolver resolver) {
+		if (jobs != null && jobs.size() > 0) {
+			for (int i = 0; i < jobs.size(); i++) {
+				addApplication (jobs.get(i), resolver);
+			}
+		}
+	}
+	
+	public static void updateApplications (ArrayList<Job> jobs, ContentResolver resolver) {
+		if (jobs != null && jobs.size() > 0) {
+			for (int i = 0; i < jobs.size(); i++) {
+				updateApplication (jobs.get(i), resolver);
+			}
+		}
+	}
+	
+	public static void updateOrInsertApplications (ArrayList<Job> jobs, ContentResolver resolver) {
+		if (jobs != null && jobs.size() > 0) {
+			for (int i = 0; i < jobs.size(); i++) {
+				if (updateApplication (jobs.get(i), resolver) == 0) { //If none were updated, insert it instead
+					addApplication(jobs.get(i), resolver);
+				}
+			}
 		}
 	}
 
@@ -157,6 +199,35 @@ public class JobmineContentProvider extends ContentProvider {
     	c.close();
     	
     	return jobs;
+	}
+	
+	public static Job getApplication (String jobId, ContentResolver resolver) {
+
+		String selection = JobmineProviderConstants.Columns.JOB_ID + " = ?";
+		String args [] = new String [] { jobId };
+		
+    	Cursor c = resolver.query(JobmineProviderConstants.CONTENT_URI, JobmineProviderConstants.DEFAULT_PROJECTION, selection, args, null);
+    	
+    	Job j = null;
+    	
+    	if (c.moveToFirst()) {
+    		j = new Job (c);
+    	}
+    	
+    	c.close();
+    	
+    	return j;
+	}
+
+	public static void updateJobDescription (String jobId, String description, ContentResolver resolver) {
+		
+		ContentValues values = new ContentValues();
+		values.put(JobmineProviderConstants.Columns.JOB_DESCRIPTION, description);
+		
+		String selection = JobmineProviderConstants.Columns.JOB_ID + " = ?";
+		String args [] = new String [] { jobId };
+		
+		resolver.update(JobmineProviderConstants.CONTENT_URI, values, selection, args);
 	}
 	
 	public static void deleteAll (ContentResolver resolver) {

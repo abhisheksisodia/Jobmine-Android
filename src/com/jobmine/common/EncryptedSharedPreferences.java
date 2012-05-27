@@ -1,4 +1,4 @@
-package com.someguy.jobmine;
+package com.jobmine.common;
 
 import java.util.Map;
 

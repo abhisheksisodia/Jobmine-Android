@@ -3,9 +3,9 @@ package com.jobmine.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jobmine.providers.JobmineContentProvider;
-import com.someguy.jobmine.Common;
-import com.someguy.jobmine.Job;
+import com.jobmine.common.JobmineNetworkRequest;
+import com.jobmine.models.Job;
+import com.jobmine.providers.JobmineProvider;
 
 public class JobmineUpdaterTask implements Runnable {
 
@@ -20,8 +20,8 @@ public class JobmineUpdaterTask implements Runnable {
 		JobmineNotificationManager.showUpdatingNotification(service);
 		
 		//Get current jobs and new jobs
-		HashMap<Integer, Job> oldJobsMap = JobmineContentProvider.getApplications(service.getContentResolver());
-		ArrayList<Job> newJobs = Common.getJobmine(service);
+		HashMap<Integer, Job> oldJobsMap = JobmineProvider.getApplications(service.getContentResolver());
+		ArrayList<Job> newJobs = JobmineNetworkRequest.getJobmine(service);
 		
 		if (newJobs != null && oldJobsMap != null && newJobs.size() > 0) {
 			
@@ -29,20 +29,20 @@ public class JobmineUpdaterTask implements Runnable {
 
 			//Compare all jobs
 			for (Job j : newJobs) {
-				//Logger.d ("Got new job: " + j.job + ", Employer: " + j.emplyer + ", ID: " + j.id);
+				//Logger.d ("Got new job: " + j.job + ", Employer: " + j.emplyer + ", ID: " + j.id + ", Desc: "+ j.description);
 				
 				try {
 					//Only check if the job existed in the old data as well
 					if (oldJobsMap.containsKey(Integer.parseInt(j.id))) {
 						Job old = oldJobsMap.get(Integer.parseInt(j.id));
-						
+	
 						//We went from applied to selected or scheduled
 						if (old.appStatus.equals("Applied") && 
 								(j.appStatus.equals("Selected") || j.appStatus.equals("Scheduled"))) {
 							newJobCount++;
 							
 							if (newJobCount == 1) {
-								JobmineNotificationManager.showSingleInterviewNotification(service, j.emplyer, j.title);
+								JobmineNotificationManager.showSingleInterviewNotification(service, j.id, j.emplyer, j.title);
 							} else {
 								JobmineNotificationManager.showMultipleInterviewNotification(service, newJobCount);
 							}
@@ -58,8 +58,7 @@ public class JobmineUpdaterTask implements Runnable {
 		
 		//Replace provider with new data
 		if (newJobs != null && newJobs.size() > 0) {
-			JobmineContentProvider.deleteAll(service.getContentResolver());
-			JobmineContentProvider.addApplications(newJobs, service.getContentResolver());
+			JobmineProvider.updateOrInsertApplications(newJobs, service.getContentResolver());
 		}
 		
 		//Cancel the current notification and stop the service

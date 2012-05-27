@@ -1,13 +1,15 @@
 package com.jobmine.service;
 
-import com.jobmine.common.Logger;
-import com.someguy.jobmine.MainActivity;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
+import com.jobmine.common.Constants;
+import com.jobmine.common.Logger;
+import com.someguy.jobmine.JobDetailsActivity;
+import com.someguy.jobmine.MainActivity;
 
 public class JobmineNotificationManager {
 	
@@ -25,8 +27,9 @@ public class JobmineNotificationManager {
 		cancelNotification (context, UPDATE_NOTIFICATION_ID);
 	}
 	
-	public static void showSingleInterviewNotification (Context context, String employer, String job) {
-		Intent intent = new Intent (context, MainActivity.class);
+	public static void showSingleInterviewNotification (Context context, String jobId, String employer, String job) {
+		Intent intent = new Intent (context, JobDetailsActivity.class);
+		intent.putExtra(Constants.idKey, jobId);
 		showNotification(context, INTERVIEW_NOTIFICATION_ID, android.R.drawable.btn_star, 
 				"New Interview with " + employer, "Interview with " + employer, job, intent, true, true, true, false);
 	}
