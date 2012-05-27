@@ -10,6 +10,7 @@ import android.os.RemoteException;
 
 import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.common.Logger;
+import com.jobmine.models.Interview;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
 
@@ -24,11 +25,21 @@ public class JobmineService extends Service {
 			ArrayList<Job> jobs = JobmineNetworkRequest.getJobmine(JobmineService.this);
 			
 			if (jobs != null && jobs.size() > 0) {
-				JobmineProvider.deleteAll(getContentResolver());
-				JobmineProvider.addApplications(jobs, getContentResolver());
+				JobmineProvider.updateOrInsertApplications(jobs, getContentResolver());
 			}
 			
 			return jobs;
+		}
+		
+		@Override
+		public List<Interview> getInterviews () throws RemoteException {
+			ArrayList<Interview> interviews = JobmineNetworkRequest.getInterviews (JobmineService.this);
+			
+			for (Interview i : interviews) {
+				Logger.d ("Got interview: " + i.employerName + " at: " + i.date);
+			}
+			
+			return interviews;
 		}
 
 		@Override

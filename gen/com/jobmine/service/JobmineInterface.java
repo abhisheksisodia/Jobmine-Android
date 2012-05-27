@@ -50,6 +50,14 @@ reply.writeNoException();
 reply.writeTypedList(_result);
 return true;
 }
+case TRANSACTION_getInterviews:
+{
+data.enforceInterface(DESCRIPTOR);
+java.util.List<com.jobmine.models.Interview> _result = this.getInterviews();
+reply.writeNoException();
+reply.writeTypedList(_result);
+return true;
+}
 case TRANSACTION_getJobDescription:
 {
 data.enforceInterface(DESCRIPTOR);
@@ -95,6 +103,23 @@ _data.recycle();
 }
 return _result;
 }
+public java.util.List<com.jobmine.models.Interview> getInterviews() throws android.os.RemoteException
+{
+android.os.Parcel _data = android.os.Parcel.obtain();
+android.os.Parcel _reply = android.os.Parcel.obtain();
+java.util.List<com.jobmine.models.Interview> _result;
+try {
+_data.writeInterfaceToken(DESCRIPTOR);
+mRemote.transact(Stub.TRANSACTION_getInterviews, _data, _reply, 0);
+_reply.readException();
+_result = _reply.createTypedArrayList(com.jobmine.models.Interview.CREATOR);
+}
+finally {
+_reply.recycle();
+_data.recycle();
+}
+return _result;
+}
 public java.lang.String getJobDescription(java.lang.String jobId) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
@@ -115,8 +140,10 @@ return _result;
 }
 }
 static final int TRANSACTION_getApplications = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
-static final int TRANSACTION_getJobDescription = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
+static final int TRANSACTION_getInterviews = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
+static final int TRANSACTION_getJobDescription = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
 }
 public java.util.List<com.jobmine.models.Job> getApplications() throws android.os.RemoteException;
+public java.util.List<com.jobmine.models.Interview> getInterviews() throws android.os.RemoteException;
 public java.lang.String getJobDescription(java.lang.String jobId) throws android.os.RemoteException;
 }

@@ -12,13 +12,13 @@ import com.jobmine.service.JobmineService;
 
 public class BindingActivity extends Activity {
 
-	protected JobmineInterface serverInterface = null;
+	private JobmineInterface serviceInterface = null;
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			serverInterface = JobmineInterface.Stub.asInterface(service);
+			serviceInterface = JobmineInterface.Stub.asInterface(service);
 			BindingActivity.this.onServiceConnected ();
 			Logger.d("Client onServiceConnected() was called");
 		}
@@ -53,5 +53,9 @@ public class BindingActivity extends Activity {
 	
 	protected void onServiceConnected () {
 		
+	}
+	
+	public JobmineInterface getServiceinterface () {
+		return serviceInterface;
 	}
 }

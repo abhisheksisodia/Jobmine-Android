@@ -152,8 +152,6 @@ public class MainActivity extends BindingActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
-		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 
 		// getSupportActionBar().setDisplayShowHomeEnabled(false);
 		// getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -232,6 +230,8 @@ public class MainActivity extends BindingActivity {
 				createDialog();
 			}
 		}
+		
+		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 	}
 
 	@Override
@@ -247,6 +247,7 @@ public class MainActivity extends BindingActivity {
 
 		case R.id.refresh:
 			new getData(this).execute(new Void[3]);
+			JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 			break;
 		case R.id.filter:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);

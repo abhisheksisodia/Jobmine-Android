@@ -45,7 +45,7 @@ public class JobDetailsActivity extends BindingActivity {
 			Spanned descriptionText = null;
 			
 			try {
-				descriptionText = Html.fromHtml(serverInterface.getJobDescription(params [0]));
+				descriptionText = Html.fromHtml(getServiceinterface().getJobDescription(params [0]));
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
