@@ -34,8 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jobmine.common.Constants;
-import com.jobmine.common.JobmineAlarmManager;
 import com.jobmine.common.Logger;
+import com.jobmine.service.JobmineAlarmManager;
 import com.jobmine.service.JobmineInterface;
 import com.jobmine.service.JobmineService;
 
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected ArrayList<Job> doInBackground(Void... arg0) {
-			return Common.getJobmine();
+			return Common.getJobmine(activity);
 		}
 
 		@Override
@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		JobmineAlarmManager.setAlarm(this, 60*5);
+		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 
 		// getSupportActionBar().setDisplayShowHomeEnabled(false);
 		// getSupportActionBar().setDisplayShowTitleEnabled(true);

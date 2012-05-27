@@ -1,12 +1,16 @@
 package com.jobmine.service;
 
+import java.util.ArrayList;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.jobmine.common.JobmineAlarmManager;
 import com.jobmine.common.Logger;
+import com.jobmine.providers.JobmineContentProvider;
+import com.someguy.jobmine.Common;
+import com.someguy.jobmine.Job;
 
 public class JobmineService extends Service {
 
@@ -15,8 +19,13 @@ public class JobmineService extends Service {
 	private JobmineInterface.Stub serviceInterface = new JobmineInterface.Stub() {
 
 		@Override
-		public void go() throws RemoteException {
-			//JobmineNotificationManager.showNotification(JobmineService.this, JobmineNotificationManager.GENERAL_NOTIFICATION_ID, R.drawable.arrow_up_float, "Ticker", "Title", "Message", new Intent (JobmineService.this, MainActivity.class), false, false);
+		public void getApplications () throws RemoteException {
+			ArrayList<Job> jobs = Common.getJobmine(JobmineService.this);
+			
+			if (jobs != null && jobs.size() > 0) {
+				JobmineContentProvider.deleteAll(getContentResolver());
+				JobmineContentProvider.addApplications(jobs, getContentResolver());
+			}
 		}
 		
 	};
@@ -34,7 +43,7 @@ public class JobmineService extends Service {
 		//Get the start reason if it exists
 		if (intent.hasExtra(JobmineAlarmManager.START_SERVICE_REASON)) {
 			startReason = intent.getExtras().getInt(JobmineAlarmManager.START_SERVICE_REASON);
-			//Logger.d("Start reason was found to be: " + startReason);
+			Logger.d("Start reason was found to be: " + startReason);
 		}
 
 		// Perform necessary action for updates

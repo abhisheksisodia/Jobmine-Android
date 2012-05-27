@@ -1,10 +1,10 @@
 package com.jobmine.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -74,6 +74,19 @@ public class JobmineContentProvider extends ContentProvider {
 		return count;
 	}
 
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values) {
+		
+		SQLiteDatabase db = databaseHelper.getWritableDatabase();
+		int inserted = 0;
+		
+		for (ContentValues v : values) {
+			inserted += db.insert(DatabaseHelper.APPLICATIONS_TABLE_NAME, null, v) != -1 ? 1 : 0;
+		}
+		
+		getContext().getContentResolver().notifyChange(uri, null);
+		return inserted;
+	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
@@ -81,10 +94,9 @@ public class JobmineContentProvider extends ContentProvider {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		long rowId = db.insert(DatabaseHelper.APPLICATIONS_TABLE_NAME, null, values);
 		
-		if (rowId > 0) {
-			Uri noteUri = ContentUris.withAppendedId(JobmineProviderConstants.CONTENT_URI, rowId);
-			getContext().getContentResolver().notifyChange(noteUri, null);
-			return noteUri;
+		if (rowId != -1) {
+			getContext().getContentResolver().notifyChange(uri, null);
+			return uri;
 		}
 		
 		return null;
@@ -107,29 +119,38 @@ public class JobmineContentProvider extends ContentProvider {
 	}
 	
 	public static void addApplications (ArrayList<Job> jobs, ContentResolver resolver) {
-		ContentValues values = new ContentValues();
-
-		for (int i = 0; i < jobs.size(); i++) {
-			values.put(JobmineProviderConstants.Columns.JOB_TITLE, jobs.get(i).title);
-			values.put(JobmineProviderConstants.Columns.JOB_ID, jobs.get(i).id);
-			values.put(JobmineProviderConstants.Columns.EMPLOYER, jobs.get(i).emplyer);
-			values.put(JobmineProviderConstants.Columns.JOB, jobs.get(i).job);
-			values.put(JobmineProviderConstants.Columns.JOB_STATUS, jobs.get(i).jobStatus);
-			values.put(JobmineProviderConstants.Columns.APP_STATUS, jobs.get(i).appStatus);
-			values.put(JobmineProviderConstants.Columns.RESUMES, jobs.get(i).resumes);
+		
+		if (jobs != null && jobs.size() > 0) {
+			ContentValues values[] = new ContentValues [jobs.size()];
+	
+			for (int i = 0; i < jobs.size(); i++) {
+				values[i] = new ContentValues();
+				values[i].put(JobmineProviderConstants.Columns.JOB_TITLE, jobs.get(i).title);
+				values[i].put(JobmineProviderConstants.Columns.JOB_ID, jobs.get(i).id);
+				values[i].put(JobmineProviderConstants.Columns.EMPLOYER, jobs.get(i).emplyer);
+				values[i].put(JobmineProviderConstants.Columns.JOB, jobs.get(i).job);
+				values[i].put(JobmineProviderConstants.Columns.JOB_STATUS, jobs.get(i).jobStatus);
+				values[i].put(JobmineProviderConstants.Columns.APP_STATUS, jobs.get(i).appStatus);
+				values[i].put(JobmineProviderConstants.Columns.RESUMES, jobs.get(i).resumes);
+			}
 			
-			resolver.insert(JobmineProviderConstants.CONTENT_URI, values);
+			resolver.bulkInsert(JobmineProviderConstants.CONTENT_URI, values);
 		}
 	}
 
-	public static ArrayList<Job> getApplications (ContentResolver resolver) {
-		ArrayList<Job> jobs = new ArrayList<Job>();
+	public static HashMap<Integer, Job> getApplications (ContentResolver resolver) {
+		HashMap<Integer, Job> jobs = new HashMap<Integer, Job>();
     	
     	Cursor c = resolver.query(JobmineProviderConstants.CONTENT_URI, JobmineProviderConstants.DEFAULT_PROJECTION, null, null, null);
     	
     	if (c.moveToFirst()) {
     		do {
-    			jobs.add(new Job(c));
+    			Job j = new Job(c);
+    			try {
+    				jobs.put(Integer.parseInt(j.id), j);
+    			} catch (Exception e) {
+    				e.printStackTrace();
+    			}
     		} while (c.moveToNext());
     	}
     	

@@ -42,10 +42,10 @@ case INTERFACE_TRANSACTION:
 reply.writeString(DESCRIPTOR);
 return true;
 }
-case TRANSACTION_go:
+case TRANSACTION_getApplications:
 {
 data.enforceInterface(DESCRIPTOR);
-this.go();
+this.getApplications();
 reply.writeNoException();
 return true;
 }
@@ -67,13 +67,13 @@ public java.lang.String getInterfaceDescriptor()
 {
 return DESCRIPTOR;
 }
-public void go() throws android.os.RemoteException
+public void getApplications() throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
 try {
 _data.writeInterfaceToken(DESCRIPTOR);
-mRemote.transact(Stub.TRANSACTION_go, _data, _reply, 0);
+mRemote.transact(Stub.TRANSACTION_getApplications, _data, _reply, 0);
 _reply.readException();
 }
 finally {
@@ -82,7 +82,7 @@ _data.recycle();
 }
 }
 }
-static final int TRANSACTION_go = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_getApplications = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
 }
-public void go() throws android.os.RemoteException;
+public void getApplications() throws android.os.RemoteException;
 }

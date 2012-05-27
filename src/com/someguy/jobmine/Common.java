@@ -13,11 +13,23 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.jobmine.common.Constants;
+
 public class Common {
 	private static String userName;
 	private static String pwd;
 	
-	public static ArrayList<Job> getJobmine() {
+	public static ArrayList<Job> getJobmine (Context context) {
+		
+		if (userName == null || userName.isEmpty()) {
+			//Set username/password
+			SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+			setUserName(settings.getString(Constants.userNameKey, ""));
+			setPassword(settings.getString(Constants.pwdKey, ""));
+		}
 
 		ArrayList<Job> jobies = new ArrayList<Job>();
 
