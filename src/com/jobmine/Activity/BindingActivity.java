@@ -1,4 +1,4 @@
-package com.someguy.jobmine;
+package com.jobmine.Activity;
 
 import android.app.Activity;
 import android.content.ComponentName;

@@ -6,10 +6,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.jobmine.Activity.JobDetailsActivity;
+import com.jobmine.Activity.MainActivity;
 import com.jobmine.common.Constants;
 import com.jobmine.common.Logger;
-import com.someguy.jobmine.JobDetailsActivity;
-import com.someguy.jobmine.MainActivity;
 
 public class JobmineNotificationManager {
 	

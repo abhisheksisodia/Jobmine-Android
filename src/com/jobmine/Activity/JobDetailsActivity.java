@@ -1,4 +1,4 @@
-package com.someguy.jobmine;
+package com.jobmine.Activity;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.jobmine.R;
 import com.jobmine.common.Constants;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;

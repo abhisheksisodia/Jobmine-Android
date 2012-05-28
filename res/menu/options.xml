@@ -3,6 +3,7 @@
     <item android:id="@+id/refresh" android:title="Refresh"></item>
     <item android:id="@+id/filter" android:title="Filter" ></item>
     <item android:id="@+id/logout" android:title="Logout"></item>
+     <item android:id="@+id/interviews" android:title="Interviews"></item>
     
 
 </menu>
