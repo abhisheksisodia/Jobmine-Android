@@ -1,15 +1,32 @@
 package com.jobmine.interview;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.database.CursorJoiner.Result;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.view.View;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.util.Linkify;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jobmine.R;
 import com.jobmine.Activity.BindingActivity;
+import com.jobmine.Activity.JobDetailsActivity;
+import com.jobmine.Activity.MainActivity;
+import com.jobmine.Activity.MainActivity.getData;
+import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.models.Interview;
+import com.jobmine.models.Job;
+import com.jobmine.providers.JobmineProvider;
 import com.jobmine.service.JobmineInterface;
 
 public class InterviewActivity extends BindingActivity {
@@ -35,10 +52,26 @@ public class InterviewActivity extends BindingActivity {
 	@Override
 	protected void onServiceConnected() {
 		super.onServiceConnected();
-		new Thread(new Runnable() {
+
+		new AsyncTask<Void, Void, List<Interview>>() {
+			private ProgressDialog dialog = null;
 			
 			@Override
-			public void run() {
+			protected void onPreExecute() {
+				dialog = new ProgressDialog(InterviewActivity.this);
+				dialog = ProgressDialog.show(InterviewActivity.this, "", "Loading...", true, false);
+				dialog.setOnDismissListener(new OnDismissListener() {
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						dialog.cancel();
+					}
+				});
+				dialog.show();
+			}
+			
+			@Override
+			protected List<Interview> doInBackground(Void... params) {
+				List<Interview> interview;
 				JobmineInterface jobmineInterface = getServiceinterface();
 				try {
 					interviews = jobmineInterface.getInterviews();
@@ -46,9 +79,22 @@ public class InterviewActivity extends BindingActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				adapter.setContent(interviews);
+
+				return interviews;
 			}
-		}).run();
+			
+			@Override
+			protected void onPostExecute(List<Interview> interviews) {
+				dialog.dismiss();
+				if (interviews != null) {
+					adapter.setContent(interviews);
+				} else {
+					Toast.makeText(InterviewActivity.this, "Login Failed.", Toast.LENGTH_SHORT).show();
+				}
+				
+			};
+
+		}.execute();
 	}
 
 }
