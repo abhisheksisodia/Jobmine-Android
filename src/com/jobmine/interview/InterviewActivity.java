@@ -35,15 +35,20 @@ public class InterviewActivity extends BindingActivity {
 	@Override
 	protected void onServiceConnected() {
 		super.onServiceConnected();
-		JobmineInterface jobmineInterface = getServiceinterface();
-		try {
-			interviews = jobmineInterface.getInterviews();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		adapter.setContent(interviews);
-
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				JobmineInterface jobmineInterface = getServiceinterface();
+				try {
+					interviews = jobmineInterface.getInterviews();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				adapter.setContent(interviews);
+			}
+		}).run();
 	}
 
 }

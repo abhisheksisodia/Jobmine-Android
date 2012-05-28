@@ -1,10 +1,12 @@
 package com.jobmine.Activity;
 
+import java.net.URLEncoder;
+
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -107,8 +109,7 @@ public class JobDetailsActivity extends BindingActivity {
 		employerView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-				intent.putExtra(SearchManager.QUERY, currentJob.emplyer);
+				Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse("http://google.com/search?q=" + URLEncoder.encode(currentJob.emplyer)));
 				startActivity(intent);
 			}
 		});
