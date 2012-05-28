@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.someguy.jobmine;
+package com.jobmine;
 
 public final class R {
     public static final class attr {
@@ -23,35 +23,44 @@ public final class R {
     }
     public static final class id {
         public static final int TextView01=0x7f070000;
-        public static final int appstatus=0x7f07000b;
+        public static final int appstatus=0x7f070010;
         public static final int checkBox1=0x7f070004;
         public static final int checkBox2=0x7f070005;
         public static final int checkBox3=0x7f070007;
         public static final int checkBox4=0x7f070006;
-        public static final int description=0x7f07000e;
-        public static final int employer=0x7f070009;
-        public static final int filter=0x7f070015;
-        public static final int jobstatus=0x7f07000a;
-        public static final int linearlayout1=0x7f070013;
-        public static final int logout=0x7f070016;
+        public static final int description=0x7f070013;
+        public static final int employer=0x7f07000e;
+        public static final int filter=0x7f07001b;
+        public static final int interview_date=0x7f07000b;
+        public static final int interview_employer=0x7f070009;
+        public static final int interview_length=0x7f07000c;
+        public static final int interview_list=0x7f070018;
+        public static final int interview_time=0x7f07000a;
+        public static final int interview_title=0x7f070008;
+        public static final int interviews=0x7f07001d;
+        public static final int jobstatus=0x7f07000f;
+        public static final int linearlayout1=0x7f070019;
+        public static final int logout=0x7f07001c;
         public static final int password1=0x7f070003;
-        public static final int refresh=0x7f070014;
-        public static final int resumes=0x7f07000c;
-        public static final int scrollView1=0x7f07000d;
+        public static final int refresh=0x7f07001a;
+        public static final int resumes=0x7f070011;
+        public static final int scrollView1=0x7f070012;
         public static final int textView1=0x7f070002;
-        public static final int textView2=0x7f070010;
-        public static final int textView3=0x7f070011;
-        public static final int textView4=0x7f070012;
-        public static final int textView5=0x7f07000f;
-        public static final int title=0x7f070008;
+        public static final int textView2=0x7f070015;
+        public static final int textView3=0x7f070016;
+        public static final int textView4=0x7f070017;
+        public static final int textView5=0x7f070014;
+        public static final int title=0x7f07000d;
         public static final int username1=0x7f070001;
     }
     public static final class layout {
         public static final int dialog=0x7f030000;
         public static final int filter_dialog=0x7f030001;
-        public static final int job_details=0x7f030002;
-        public static final int jobentry=0x7f030003;
-        public static final int main=0x7f030004;
+        public static final int interview_entry=0x7f030002;
+        public static final int job_details=0x7f030003;
+        public static final int jobentry=0x7f030004;
+        public static final int jobinterview=0x7f030005;
+        public static final int main=0x7f030006;
     }
     public static final class menu {
         public static final int options=0x7f060000;

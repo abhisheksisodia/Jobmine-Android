@@ -1,4 +1,4 @@
-package com.someguy.jobmine;
+package com.jobmine.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jobmine.R;
 import com.jobmine.common.Constants;
 import com.jobmine.common.EncryptedSharedPreferences;
 import com.jobmine.common.JobmineNetworkRequest;
+import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
 import com.jobmine.service.JobmineAlarmManager;
@@ -42,7 +44,7 @@ public class MainActivity extends BindingActivity {
 	/** Called when the activity is first created. */
 	ListView mListView;
 	boolean displayApplied, displaySelected, displayNotSelected, displayRanked;
-	ArrayList<Job> jobies;
+	List<Job> jobies;
 	SharedPreferences settings;
 	Editor editor;
 
@@ -103,7 +105,7 @@ public class MainActivity extends BindingActivity {
 
 	}
 
-	private void setContent(ArrayList<Job> jobies) {
+	private void setContent(List<Job> jobies) {
 		LinearLayout list = (LinearLayout) findViewById(R.id.linearlayout1);
 		LayoutInflater li = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 		list.removeAllViews();
@@ -296,6 +298,10 @@ public class MainActivity extends BindingActivity {
 			LinearLayout linearLayout1 = (LinearLayout) findViewById(R.id.linearlayout1);
 			linearLayout1.removeAllViews();
 			createDialog();
+			break;
+		case R.id.interviews:
+			Intent intent = new Intent(MainActivity.this, InterviewActivity.class);
+			startActivity(intent);
 			break;
 		default:
 			break;

@@ -11,6 +11,7 @@ import com.someguy.jobmine.JobDetailsActivity;
 import com.someguy.jobmine.MainActivity;
 
 
+
 /**
  * Class that will handle all notifications
  * @author Jeremy
