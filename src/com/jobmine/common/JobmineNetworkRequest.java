@@ -21,19 +21,16 @@ import com.jobmine.models.Interview;
 import com.jobmine.models.Job;
 
 public class JobmineNetworkRequest {
-	private static String userName;
-	private static String pwd;
-	
+
 	public static String getJobDescription (Context context, String jobId) {
 		
 		String descriptionText = "";
+		String userName, pwd;
 		
-		if (userName == null || userName.isEmpty()) {
-			//Set username/password
-			SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
-			setUserName(settings.getString(Constants.userNameKey, ""));
-			setPassword(settings.getString(Constants.pwdKey, ""));
-		}
+		//Set username/password
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		userName = settings.getString(Constants.userNameKey, "");
+		pwd = settings.getString(Constants.pwdKey, "");
 		
 		try {
 			
@@ -70,22 +67,14 @@ public class JobmineNetworkRequest {
 	
 	public static ArrayList<Job> getJobmine (Context context) {
 		
-		if (userName == null || userName.isEmpty()) {
-			//Set username/password
-			SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
-			setUserName(settings.getString(Constants.userNameKey, ""));
-			setPassword(settings.getString(Constants.pwdKey, ""));
-		}
+		String userName, pwd;
+		
+		//Set username/password
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		userName = settings.getString(Constants.userNameKey, "");
+		pwd = settings.getString(Constants.pwdKey, "");
 
 		ArrayList<Job> jobies = new ArrayList<Job>();
-
-		ArrayList<String> title = new ArrayList<String>();
-		ArrayList<String> id = new ArrayList<String>();
-		ArrayList<String> employer = new ArrayList<String>();
-		ArrayList<String> jobStatus = new ArrayList<String>();
-		ArrayList<String> appStatus = new ArrayList<String>();
-		ArrayList<String> resumes = new ArrayList<String>();
-		ArrayList<String> job = new ArrayList<String>();
 
 		DefaultHttpClient client = new DefaultHttpClient();
 
@@ -111,67 +100,56 @@ public class JobmineNetworkRequest {
 			}
 			Element b = element.get(5);
 			Elements c = b.getAllElements();
+			Job tempJob = new Job();
+			
 			for (int i = 0; i < c.size(); i++) {
+
 				if (c.get(i).id().contains("UW_CO_JB_TITLE2") && c.get(i).hasText()) {
-					title.add(c.get(i).ownText());
+					tempJob.title = c.get(i).ownText();
+					
 				} else if (c.get(i).id().contains("UW_CO_JB_TITLE2") && c.get(i).hasText()) {
-					title.add(c.get(i).ownText());
+					tempJob.title = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_APPS_VW2_UW_CO_JOB_ID") && c.get(i).hasText()) {
+					tempJob.id = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_JOBINFOVW_UW_CO_PARENT_NAME") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
+					tempJob.emplyer = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_TERMCALND_UW_CO_DESCR_30") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
+					tempJob.job = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_JOBSTATVW_UW_CO_JOB_STATUS") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
+					tempJob.jobStatus = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_APPSTATVW_UW_CO_APPL_STATUS") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
+					tempJob.appStatus = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_JOBAPP_CT_UW_CO_MAX_RESUMES") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
+					tempJob.resumes = c.get(i).ownText();
+					
+				} else if (c.get(i).id().contains("UW_CO_JOBAPP_D2_UW_CO_ALL_TEXT") && c.get(i).hasText()) {
+					jobies.add(tempJob);
+					tempJob = new Job();
 				}
-
-				if (c.get(i).id().contains("UW_CO_APPS_VW2_UW_CO_JOB_ID") && c.get(i).hasText()) {
-					id.add(c.get(i).ownText());
-				}
-				if (c.get(i).id().contains("UW_CO_JOBINFOVW_UW_CO_PARENT_NAME") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					employer.add(c.get(i).ownText());
-				}
-				if (c.get(i).id().contains("UW_CO_TERMCALND_UW_CO_DESCR_30") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					job.add(c.get(i).ownText());
-				}
-				if (c.get(i).id().contains("UW_CO_JOBSTATVW_UW_CO_JOB_STATUS") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					jobStatus.add(c.get(i).ownText());
-					if (c.get(i).ownText().contains("Ranking Completed")) {
-						appStatus.add(" ");
-					}
-				}
-				if (c.get(i).id().contains("UW_CO_APPSTATVW_UW_CO_APPL_STATUS") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					appStatus.add(c.get(i).ownText());
-				}
-				if (c.get(i).id().contains("UW_CO_JOBAPP_CT_UW_CO_MAX_RESUMES") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					resumes.add(c.get(i).ownText());
-				}
-			}
-
-			for (int i = 0; i < title.size(); i++) {
-				Job j = new Job();
-				j.appStatus = appStatus.get(i);
-				j.emplyer = employer.get(i);
-				j.id = id.get(i);
-				j.job = job.get(i);
-				j.jobStatus = jobStatus.get(i);
-				j.resumes = resumes.get(i);
-				j.title = title.get(i);
-				
-				if (!j.id.isEmpty()) {
-					jobies.add(j);
-				}
-				
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<Job>();
 		}
+		
 		return jobies;
 	}
 	
 	public static ArrayList<Interview> getInterviews(Context context) {
 		
-		if (userName == null || userName.isEmpty()) {
-			//Set username/password
-			SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
-			setUserName(settings.getString(Constants.userNameKey, ""));
-			setPassword(settings.getString(Constants.pwdKey, ""));
-		}
+		String userName, pwd;
+		
+		//Set username/password
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		userName = settings.getString(Constants.userNameKey, "");
+		pwd = settings.getString(Constants.pwdKey, "");
 		
 		ArrayList<String> emplyNameList,titleList,dateList,lengthList,timeList,interviewerList,idList;
 		ArrayList<Interview> interviews = new ArrayList<Interview>();
@@ -262,12 +240,4 @@ public class JobmineNetworkRequest {
 		return interviews;
 	}
 	
-	public static void setPassword(String pass){
-		pwd = pass;
-	}
-	
-	public static void setUserName(String user){
-		userName = user;
-	}
-
 }

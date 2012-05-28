@@ -7,10 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.jobmine.common.Constants;
-import com.jobmine.common.Logger;
 import com.someguy.jobmine.JobDetailsActivity;
 import com.someguy.jobmine.MainActivity;
 
+
+/**
+ * Class that will handle all notifications
+ * @author Jeremy
+ *
+ */
 public class JobmineNotificationManager {
 	
 	public static final int UPDATE_NOTIFICATION_ID = 0;
@@ -59,8 +64,6 @@ public class JobmineNotificationManager {
 		notification.setLatestEventInfo(context, title, message, pendingIntent);
 		
 		notificationManager.notify(notificationId, notification);
-		
-		Logger.d("Showing Notification");
 	}
 	
 	private static void cancelNotification (Context context, int notificationId) {

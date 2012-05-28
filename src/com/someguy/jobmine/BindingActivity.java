@@ -10,6 +10,13 @@ import com.jobmine.common.Logger;
 import com.jobmine.service.JobmineInterface;
 import com.jobmine.service.JobmineService;
 
+/**
+ * Class used for activities to have access to the service's functions
+ * Call getServiceinterface() to get an interface to the service
+ * Make sure you call super() for onResume() and onPause()
+ * @author Jeremy
+ *
+ */
 public class BindingActivity extends Activity {
 
 	private JobmineInterface serviceInterface = null;
@@ -30,7 +37,6 @@ public class BindingActivity extends Activity {
 	};
 
 	private void bindToJobmineService () {
-		Logger.d("trying to bind to service");
 		Intent i = new Intent (JobmineService.class.getName());
 		bindService(i, serviceConnection, Activity.BIND_AUTO_CREATE);
 	}

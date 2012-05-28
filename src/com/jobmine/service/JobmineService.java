@@ -14,10 +14,16 @@ import com.jobmine.models.Interview;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
 
+/**
+ * Service that will perform updates and service client requests
+ * @author Jeremy
+ *
+ */
 public class JobmineService extends Service {
 
 	private int startReason = -1;
 	
+	//Implementation of the interface
 	private JobmineInterface.Stub serviceInterface = new JobmineInterface.Stub() {
 
 		@Override
@@ -34,10 +40,6 @@ public class JobmineService extends Service {
 		@Override
 		public List<Interview> getInterviews () throws RemoteException {
 			ArrayList<Interview> interviews = JobmineNetworkRequest.getInterviews (JobmineService.this);
-			
-			for (Interview i : interviews) {
-				Logger.d ("Got interview: " + i.employerName + " at: " + i.date);
-			}
 			
 			return interviews;
 		}
@@ -77,7 +79,6 @@ public class JobmineService extends Service {
 		//Get the start reason if it exists
 		if (intent.hasExtra(JobmineAlarmManager.START_SERVICE_REASON)) {
 			startReason = intent.getExtras().getInt(JobmineAlarmManager.START_SERVICE_REASON);
-			Logger.d("Start reason was found to be: " + startReason);
 		}
 
 		// Perform necessary action for updates
@@ -97,7 +98,6 @@ public class JobmineService extends Service {
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		Logger.d ("Service onBind() was called!");
 		return serviceInterface;
 	}
 

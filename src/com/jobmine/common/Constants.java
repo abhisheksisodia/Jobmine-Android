@@ -15,5 +15,6 @@ public class Constants {
 	public static final String appStatusKey = "appstatuskey";
 	public static final String resumeKey = "resumekey";
 	
+	//Time interval for checking for new interviews
 	public static final int SERVICE_UPDATE_TIME_INTERVAL = 60*30;
 }

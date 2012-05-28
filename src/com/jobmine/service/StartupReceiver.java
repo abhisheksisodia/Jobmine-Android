@@ -7,6 +7,12 @@ import android.content.Intent;
 import com.jobmine.common.Constants;
 import com.jobmine.common.Logger;
 
+/**
+ * This receiver will be called when the device is booted.
+ * It will setup the 'alarm' to start the service updater
+ * @author Jeremy
+ *
+ */
 public class StartupReceiver extends BroadcastReceiver {
 
 	@Override
