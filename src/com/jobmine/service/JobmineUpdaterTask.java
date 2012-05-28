@@ -7,6 +7,11 @@ import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
 
+/**
+ * Runnable that will perform the update check and notify of any new interviews.
+ * @author Jeremy
+ *
+ */
 public class JobmineUpdaterTask implements Runnable {
 
 	private JobmineService service = null;
@@ -29,18 +34,18 @@ public class JobmineUpdaterTask implements Runnable {
 
 			//Compare all jobs
 			for (Job j : newJobs) {
-				//Logger.d ("Got new job: " + j.job + ", Employer: " + j.emplyer + ", ID: " + j.id + ", Desc: "+ j.description);
 				
 				try {
+					
 					//Only check if the job existed in the old data as well
 					if (oldJobsMap.containsKey(Integer.parseInt(j.id))) {
 						Job old = oldJobsMap.get(Integer.parseInt(j.id));
 	
 						//We went from applied to selected or scheduled
-						if (old.appStatus.equals("Applied") && 
-								(j.appStatus.equals("Selected") || j.appStatus.equals("Scheduled"))) {
+						if (old.appStatus.equals("Applied") && (j.appStatus.equals("Selected") || j.appStatus.equals("Scheduled"))) {
 							newJobCount++;
 							
+							//Show different notifications for different counts
 							if (newJobCount == 1) {
 								JobmineNotificationManager.showSingleInterviewNotification(service, j.id, j.emplyer, j.title);
 							} else {
@@ -49,6 +54,7 @@ public class JobmineUpdaterTask implements Runnable {
 							
 						}
 					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

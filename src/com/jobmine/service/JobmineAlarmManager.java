@@ -6,8 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
 
-import com.jobmine.common.Logger;
 
+/**
+ * Class that will handle the update alarm
+ * @author Jeremy
+ *
+ */
 public class JobmineAlarmManager {
 	public static final String START_SERVICE_REASON = "START_REASON";
 	
@@ -22,8 +26,6 @@ public class JobmineAlarmManager {
 		
 		PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 		alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), intervalInSeconds * 1000, pendingIntent);
-		
-		Logger.d("Setting update alarm");
 	}
 	
 	public static void cancelUpdateAlarm (Context context) {

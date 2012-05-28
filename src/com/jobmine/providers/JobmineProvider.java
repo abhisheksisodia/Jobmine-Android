@@ -16,6 +16,12 @@ import android.net.Uri;
 import com.jobmine.common.Logger;
 import com.jobmine.models.Job;
 
+
+/**
+ * Stores application and job information
+ * @author Jeremy
+ *
+ */
 public class JobmineProvider extends ContentProvider {
 
 	private DatabaseHelper databaseHelper = null;
@@ -50,6 +56,7 @@ public class JobmineProvider extends ContentProvider {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Logger.d("Upgrading database");
 			db.execSQL("DROP TABLE IF EXISTS " + APPLICATIONS_TABLE_NAME);
 			onCreate(db);
 		}

@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,10 +76,14 @@ public class MainActivity extends BindingActivity {
 
 		@Override
 		protected ArrayList<Job> doInBackground(Void... arg0) {
-			ArrayList<Job> jobs = JobmineNetworkRequest.getJobmine(activity);
+			ArrayList<Job> jobs = new ArrayList<Job>();
 			
-			//Insert into content provider
-			JobmineProvider.updateOrInsertApplications(jobs, getContentResolver());
+			try {
+				jobs = (ArrayList<Job>) getServiceinterface().getApplications();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			return jobs;
 		}
@@ -90,6 +95,9 @@ public class MainActivity extends BindingActivity {
 				jobies = param;
 				setContent(param);
 			} else {
+				editor.remove(Constants.userNameKey);
+				editor.remove(Constants.pwdKey);
+				editor.commit();
 				Toast.makeText(MainActivity.this, "Login Failed.", Toast.LENGTH_SHORT).show();
 			}
 
@@ -182,9 +190,6 @@ public class MainActivity extends BindingActivity {
 				EditText passwordField = (EditText) layout.findViewById(R.id.password1);
 				String passwordFieldContent = passwordField.getEditableText().toString();
 				String usernameFieldContent = usernameField.getEditableText().toString();
-
-				JobmineNetworkRequest.setUserName(usernameFieldContent);
-				JobmineNetworkRequest.setPassword(passwordFieldContent);
 				try {
 					editor.putString(Constants.userNameKey, usernameFieldContent);
 					editor.putString(Constants.pwdKey, passwordFieldContent);
@@ -217,24 +222,26 @@ public class MainActivity extends BindingActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
+	}
+	
+	@Override
+	protected void onServiceConnected() {
+		super.onServiceConnected();
+		
 		if (jobies.size() > 0) {
 			setContent(jobies);
 		} else {
 			if (settings.contains(Constants.userNameKey) && settings.contains(Constants.pwdKey)) {
 				try {
-					JobmineNetworkRequest.setUserName(settings.getString(Constants.userNameKey, ""));
-					JobmineNetworkRequest.setPassword(settings.getString(Constants.pwdKey, ""));
 					new getData(MainActivity.this).execute(new Void[3]);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
 				createDialog();
 			}
 		}
-		
-		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 	}
 
 	@Override

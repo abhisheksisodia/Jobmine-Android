@@ -3,6 +3,12 @@ package com.jobmine.providers;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+
+/**
+ * Holds constants for the content provider
+ * @author Jeremy
+ *
+ */
 public class JobmineProviderConstants {
 	
 	public static final String NAME = "com.jobmine.providers.JobmineContentProvider";
