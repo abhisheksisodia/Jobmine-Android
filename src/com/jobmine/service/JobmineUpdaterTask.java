@@ -28,7 +28,7 @@ public class JobmineUpdaterTask implements Runnable {
 		HashMap<Integer, Job> oldJobsMap = JobmineProvider.getApplications(service.getContentResolver());
 		ArrayList<Job> newJobs = JobmineNetworkRequest.getJobmine(service);
 		
-		if (newJobs != null && oldJobsMap != null && newJobs.size() > 0) {
+		if (newJobs != null && oldJobsMap != null && oldJobsMap.size() > 0 && newJobs.size() > 0) {
 			
 			int newJobCount = 0;
 

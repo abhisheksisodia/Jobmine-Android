@@ -295,6 +295,7 @@ public class MainActivity extends BindingActivity {
 			editor.remove(Constants.userNameKey);
 			editor.remove(Constants.pwdKey);
 			editor.commit();
+			JobmineProvider.deleteAll(getContentResolver());
 			LinearLayout linearLayout1 = (LinearLayout) findViewById(R.id.linearlayout1);
 			linearLayout1.removeAllViews();
 			createDialog();
