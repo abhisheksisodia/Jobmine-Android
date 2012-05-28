@@ -50,7 +50,7 @@ public class MainActivity extends BindingActivity {
 
 	public class getData extends AsyncTask<Void, Void, ArrayList<Job>> {
 
-		ProgressDialog dialog;
+		ProgressDialog dialog = null;
 		private getData selfReference;
 		Activity activity;
 
@@ -59,16 +59,15 @@ public class MainActivity extends BindingActivity {
 			this.activity = activity;
 			dialog = new ProgressDialog(activity);
 		}
-
+		
 		@Override
 		protected void onPreExecute() {
-			dialog = ProgressDialog.show(activity, "", "Loading...", true, false);
+			dialog = new ProgressDialog(MainActivity.this);
+			dialog = ProgressDialog.show(MainActivity.this, "", "Loading...", true, false);
 			dialog.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
-					if (selfReference != null) {
-						selfReference.cancel(true);
-					}
+					dialog.cancel();
 				}
 			});
 			dialog.show();
