@@ -36,6 +36,7 @@ import com.jobmine.common.Constants;
 import com.jobmine.common.EncryptedSharedPreferences;
 import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
+import com.jobmine.providers.JobmineProvider;
 import com.jobmine.service.JobmineAlarmManager;
 
 public class MainActivity extends BindingActivity {

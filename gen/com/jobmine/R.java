@@ -23,7 +23,7 @@ public final class R {
     }
     public static final class id {
         public static final int TextView01=0x7f070000;
-        public static final int applications=0x7f07001b;
+        public static final int applications=0x7f07001e;
         public static final int appstatus=0x7f070010;
         public static final int checkBox1=0x7f070004;
         public static final int checkBox2=0x7f070005;
@@ -31,17 +31,17 @@ public final class R {
         public static final int checkBox4=0x7f070006;
         public static final int description=0x7f070013;
         public static final int employer=0x7f07000e;
-        public static final int filter=0x7f07001d;
+        public static final int filter=0x7f07001b;
         public static final int interview_date=0x7f07000b;
         public static final int interview_employer=0x7f070009;
         public static final int interview_length=0x7f07000c;
         public static final int interview_list=0x7f070018;
         public static final int interview_time=0x7f07000a;
         public static final int interview_title=0x7f070008;
-        public static final int interviews=0x7f07001c;
+        public static final int interviews=0x7f07001d;
         public static final int jobstatus=0x7f07000f;
         public static final int linearlayout1=0x7f070019;
-        public static final int logout=0x7f07001e;
+        public static final int logout=0x7f07001c;
         public static final int password1=0x7f070003;
         public static final int refresh=0x7f07001a;
         public static final int resumes=0x7f070011;
@@ -64,9 +64,10 @@ public final class R {
         public static final int main=0x7f030006;
     }
     public static final class menu {
-        public static final int options_details=0x7f060000;
-        public static final int options_interview=0x7f060001;
-        public static final int options_main=0x7f060002;
+        public static final int options=0x7f060000;
+        public static final int options_details=0x7f060001;
+        public static final int options_interview=0x7f060002;
+        public static final int options_main=0x7f060003;
     }
     public static final class string {
         public static final int app_name=0x7f050001;
