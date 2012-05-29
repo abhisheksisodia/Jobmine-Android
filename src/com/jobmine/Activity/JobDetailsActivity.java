@@ -13,14 +13,19 @@ import android.os.RemoteException;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.util.Linkify;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.jobmine.R;
 import com.jobmine.common.Constants;
+import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
+import com.jobmine.service.JobmineAlarmManager;
 
 
 public class JobDetailsActivity extends BindingActivity {
@@ -114,5 +119,37 @@ public class JobDetailsActivity extends BindingActivity {
 			}
 		});
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.options_details, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+
+		case R.id.refresh:
+			(new GetJobDescriptionTask()).execute();
+			JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
+			break;
+		case R.id.applications:
+			Intent intent = new Intent(JobDetailsActivity.this, MainActivity.class);
+			startActivity(intent);
+			break;
+		case R.id.interviews:
+			Intent intent2 = new Intent(JobDetailsActivity.this, InterviewActivity.class);
+			startActivity(intent2);
+			break;
+		default:
+			break;
+
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	
 }
 

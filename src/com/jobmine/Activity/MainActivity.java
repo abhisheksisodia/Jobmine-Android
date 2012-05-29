@@ -34,10 +34,8 @@ import android.widget.Toast;
 import com.jobmine.R;
 import com.jobmine.common.Constants;
 import com.jobmine.common.EncryptedSharedPreferences;
-import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
-import com.jobmine.providers.JobmineProvider;
 import com.jobmine.service.JobmineAlarmManager;
 
 public class MainActivity extends BindingActivity {
@@ -51,11 +49,9 @@ public class MainActivity extends BindingActivity {
 	public class getData extends AsyncTask<Void, Void, ArrayList<Job>> {
 
 		ProgressDialog dialog = null;
-		private getData selfReference;
 		Activity activity;
 
 		public getData(Activity activity) {
-			selfReference = this;
 			this.activity = activity;
 			dialog = new ProgressDialog(activity);
 		}
@@ -246,7 +242,7 @@ public class MainActivity extends BindingActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.options, menu);
+		inflater.inflate(R.menu.options_main, menu);
 		return true;
 	}
 
