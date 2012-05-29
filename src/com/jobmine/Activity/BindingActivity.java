@@ -64,4 +64,6 @@ public class BindingActivity extends Activity {
 	public JobmineInterface getServiceinterface () {
 		return serviceInterface;
 	}
+	
+	
 }
