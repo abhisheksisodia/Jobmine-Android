@@ -79,6 +79,7 @@ public class MainActivity extends BindingActivity {
 			
 			try {
 				jobs = (ArrayList<Job>) getServiceinterface().getApplications();
+				getServiceinterface().checkForUpdates (jobs);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -173,6 +174,7 @@ public class MainActivity extends BindingActivity {
 		displayNotSelected = settings.getBoolean(Constants.notSelectedKey, true);
 		displayRanked = settings.getBoolean(Constants.rankedKey, true);
 
+		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 	}
 
 	private void createDialog() {
@@ -221,7 +223,6 @@ public class MainActivity extends BindingActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 	}
 	
 	@Override
@@ -256,7 +257,6 @@ public class MainActivity extends BindingActivity {
 
 		case R.id.refresh:
 			new getData(this).execute(new Void[3]);
-			JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 			break;
 		case R.id.filter:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);

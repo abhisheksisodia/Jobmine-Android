@@ -15,9 +15,11 @@ import com.jobmine.providers.JobmineProvider;
 public class JobmineUpdaterTask implements Runnable {
 
 	private JobmineService service = null;
+	private ArrayList<Job> newData = null;
 	
-	public JobmineUpdaterTask(JobmineService context) {
+	public JobmineUpdaterTask(JobmineService context, ArrayList<Job> newData) {
 		this.service = context;
+		this.newData = newData;
 	}
 	
 	@Override
@@ -26,7 +28,14 @@ public class JobmineUpdaterTask implements Runnable {
 		
 		//Get current jobs and new jobs
 		HashMap<Integer, Job> oldJobsMap = JobmineProvider.getApplications(service.getContentResolver());
-		ArrayList<Job> newJobs = JobmineNetworkRequest.getJobmine(service);
+		ArrayList<Job> newJobs = new ArrayList<Job>();
+		
+		//If we are passed the jobs manually, use it instead of fetching new data
+		if (newData != null && newData.size() > 0) {
+			newJobs = newData;
+		} else {
+			newJobs = JobmineNetworkRequest.getJobmine(service);
+		}
 		
 		if (newJobs != null && oldJobsMap != null && oldJobsMap.size() > 0 && newJobs.size() > 0) {
 			

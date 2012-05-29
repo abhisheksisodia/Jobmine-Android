@@ -64,6 +64,11 @@ public class JobmineService extends Service {
 			}
 		}
 
+		@Override
+		public void checkForUpdates(List<Job> data) throws RemoteException {
+			beginUpdate ((ArrayList<Job>) data);
+		}
+
 	};
 	
 	@Override
@@ -83,8 +88,7 @@ public class JobmineService extends Service {
 
 		// Perform necessary action for updates
 		if (startReason == JobmineAlarmManager.START_SERVICE_FOR_UPDATES) {
-			Thread thread = new Thread(new JobmineUpdaterTask(this));
-			thread.start();
+			beginUpdate (null);
 		}
 
 		return super.onStartCommand(intent, flags, startId);
@@ -99,6 +103,11 @@ public class JobmineService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return serviceInterface;
+	}
+	
+	private void beginUpdate (ArrayList<Job> newData) {
+		Thread thread = new Thread(new JobmineUpdaterTask(this, newData));
+		thread.start();
 	}
 
 }

@@ -7,4 +7,5 @@ interface JobmineInterface {
 	List<Job> getApplications ();
 	List<Interview> getInterviews ();
 	String getJobDescription (String jobId);
+	void checkForUpdates (in List<Job> data);
 }

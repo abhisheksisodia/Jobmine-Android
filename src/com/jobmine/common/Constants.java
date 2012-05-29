@@ -1,6 +1,8 @@
 package com.jobmine.common;
 
 public class Constants {
+	public static final int MILLI_PER_MINUTE = 60 * 1000;
+	
 	public static final String PREFS_NAME = "MyPrefsFile";
 	public static final String appliedKey = "displayApplied";
 	public static final String selectedKey = "displaySelected";
@@ -17,4 +19,7 @@ public class Constants {
 	
 	//Time interval for checking for new interviews
 	public static final int SERVICE_UPDATE_TIME_INTERVAL = 60*30;
+	
+	public static final String PREFERENCE_LAST_UPDATE_TIME = "last_update_time";
+	public static final int LAST_UPDATE_TIME_TRESHOLD = 5 * MILLI_PER_MINUTE;
 }

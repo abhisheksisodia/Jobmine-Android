@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\Christopher\\workspace\\Jobmine-Android\\src\\com\\jobmine\\service\\JobmineInterface.aidl
+ * Original file: D:\\In Progress\\Java\\Android\\Jobmine-Android\\src\\com\\jobmine\\service\\JobmineInterface.aidl
  */
 package com.jobmine.service;
 public interface JobmineInterface extends android.os.IInterface
@@ -66,6 +66,15 @@ _arg0 = data.readString();
 java.lang.String _result = this.getJobDescription(_arg0);
 reply.writeNoException();
 reply.writeString(_result);
+return true;
+}
+case TRANSACTION_checkForUpdates:
+{
+data.enforceInterface(DESCRIPTOR);
+java.util.List<com.jobmine.models.Job> _arg0;
+_arg0 = data.createTypedArrayList(com.jobmine.models.Job.CREATOR);
+this.checkForUpdates(_arg0);
+reply.writeNoException();
 return true;
 }
 }
@@ -138,12 +147,29 @@ _data.recycle();
 }
 return _result;
 }
+public void checkForUpdates(java.util.List<com.jobmine.models.Job> data) throws android.os.RemoteException
+{
+android.os.Parcel _data = android.os.Parcel.obtain();
+android.os.Parcel _reply = android.os.Parcel.obtain();
+try {
+_data.writeInterfaceToken(DESCRIPTOR);
+_data.writeTypedList(data);
+mRemote.transact(Stub.TRANSACTION_checkForUpdates, _data, _reply, 0);
+_reply.readException();
+}
+finally {
+_reply.recycle();
+_data.recycle();
+}
+}
 }
 static final int TRANSACTION_getApplications = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
 static final int TRANSACTION_getInterviews = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
 static final int TRANSACTION_getJobDescription = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
+static final int TRANSACTION_checkForUpdates = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
 }
 public java.util.List<com.jobmine.models.Job> getApplications() throws android.os.RemoteException;
 public java.util.List<com.jobmine.models.Interview> getInterviews() throws android.os.RemoteException;
 public java.lang.String getJobDescription(java.lang.String jobId) throws android.os.RemoteException;
+public void checkForUpdates(java.util.List<com.jobmine.models.Job> data) throws android.os.RemoteException;
 }

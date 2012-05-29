@@ -71,7 +71,7 @@ public class InterviewActivity extends BindingActivity {
 			
 			@Override
 			protected List<Interview> doInBackground(Void... params) {
-				List<Interview> interview;
+				List<Interview> interview = new ArrayList<Interview>();
 				JobmineInterface jobmineInterface = getServiceinterface();
 				try {
 					interviews = jobmineInterface.getInterviews();
