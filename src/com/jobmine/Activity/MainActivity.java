@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.jobmine.R;
 import com.jobmine.common.Constants;
 import com.jobmine.common.EncryptedSharedPreferences;
+import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
@@ -47,7 +48,7 @@ public class MainActivity extends BindingActivity {
 	SharedPreferences settings;
 	Editor editor;
 
-	public class getData extends AsyncTask<Void, Void, ArrayList<Job>> {
+	public class getData extends AsyncTask<Boolean, Void, List<Job>> {
 
 		ProgressDialog dialog = null;
 		Activity activity;
@@ -71,22 +72,48 @@ public class MainActivity extends BindingActivity {
 		}
 
 		@Override
-		protected ArrayList<Job> doInBackground(Void... arg0) {
-			ArrayList<Job> jobs = new ArrayList<Job>();
+		protected List<Job> doInBackground(Boolean... arg0) {
+			List<Job> jobs = new ArrayList<Job>();
+			
+			JobmineAlarmManager.setUpdateAlarm(MainActivity.this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
+			boolean forceUpdate = arg0 [0];
 			
 			try {
-				jobs = (ArrayList<Job>) getServiceinterface().getApplications();
-				getServiceinterface().checkForUpdates (jobs);
+				getServiceinterface().getApplications(forceUpdate);
+				jobs = JobmineProvider.getApplications(getContentResolver());
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			
+			if (jobs == null) {
+				try {
+					final int lastError = getServiceinterface().getLastNetworkError();
+					
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							if (lastError == JobmineNetworkRequest.INVALID_ID_PASS) {
+								Toast.makeText(MainActivity.this, "Invalid ID/PASS.", Toast.LENGTH_SHORT).show();
+							} else if (lastError == JobmineNetworkRequest.INVALID_TIME) {
+								Toast.makeText(MainActivity.this, "Invalid Time.", Toast.LENGTH_SHORT).show();
+							} else if (lastError == JobmineNetworkRequest.UNKNOWN_ERROR) {
+								Toast.makeText(MainActivity.this, "Unknown Error.", Toast.LENGTH_SHORT).show();
+							}
+						}
+						
+					});
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			return jobs;
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<Job> param) {
+		protected void onPostExecute(List<Job> param) {
 			dialog.dismiss();
 			if (param != null) {
 				jobies = param;
@@ -95,7 +122,7 @@ public class MainActivity extends BindingActivity {
 				editor.remove(Constants.userNameKey);
 				editor.remove(Constants.pwdKey);
 				editor.commit();
-				Toast.makeText(MainActivity.this, "Login Failed.", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(MainActivity.this, "Login Failed.", Toast.LENGTH_SHORT).show();
 			}
 
 		}
@@ -170,8 +197,6 @@ public class MainActivity extends BindingActivity {
 		displaySelected = settings.getBoolean(Constants.selectedKey, true);
 		displayNotSelected = settings.getBoolean(Constants.notSelectedKey, true);
 		displayRanked = settings.getBoolean(Constants.rankedKey, true);
-
-		JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 	}
 
 	private void createDialog() {
@@ -196,7 +221,7 @@ public class MainActivity extends BindingActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				new getData(MainActivity.this).execute(new Void[3]);
+				new getData(MainActivity.this).execute(false);
 			}
 		})
 		// otherwise,just cancel the dialog
@@ -231,7 +256,7 @@ public class MainActivity extends BindingActivity {
 		} else {
 			if (settings.contains(Constants.userNameKey) && settings.contains(Constants.pwdKey)) {
 				try {
-					new getData(MainActivity.this).execute(new Void[3]);
+					new getData(MainActivity.this).execute(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -253,7 +278,7 @@ public class MainActivity extends BindingActivity {
 		switch (item.getItemId()) {
 
 		case R.id.refresh:
-			new getData(this).execute(new Void[3]);
+			new getData(this).execute(true);
 			break;
 		case R.id.filter:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -291,7 +316,7 @@ public class MainActivity extends BindingActivity {
 			editor.remove(Constants.userNameKey);
 			editor.remove(Constants.pwdKey);
 			editor.commit();
-			JobmineProvider.deleteAll(getContentResolver());
+			JobmineProvider.deleteAllApplications(getContentResolver());
 			LinearLayout linearLayout1 = (LinearLayout) findViewById(R.id.linearlayout1);
 			linearLayout1.removeAllViews();
 			createDialog();

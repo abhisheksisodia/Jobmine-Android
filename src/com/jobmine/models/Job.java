@@ -26,14 +26,14 @@ public class Job implements Parcelable {
 	}
 	
 	public Job(Cursor c) {
-		title = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.JOB_TITLE));
-		id = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.JOB_ID));
-		emplyer = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.EMPLOYER));
-		job = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.JOB));
-		jobStatus = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.JOB_STATUS));
-		appStatus = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.APP_STATUS));
-		resumes = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.RESUMES));
-		description = c.getString(c.getColumnIndex(JobmineProviderConstants.Columns.JOB_DESCRIPTION));
+		title = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.JOB_TITLE));
+		id = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.JOB_ID));
+		emplyer = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.EMPLOYER));
+		job = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.JOB));
+		jobStatus = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.JOB_STATUS));
+		appStatus = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.APP_STATUS));
+		resumes = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.RESUMES));
+		description = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.JOB_DESCRIPTION));
 	}
 	
 	public void writeToParcel(Parcel dest, int flags) {

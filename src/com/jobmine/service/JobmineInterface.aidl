@@ -4,8 +4,9 @@ import com.jobmine.models.Job;
 import com.jobmine.models.Interview;
 
 interface JobmineInterface {
-	List<Job> getApplications ();
-	List<Interview> getInterviews ();
-	String getJobDescription (String jobId);
-	void checkForUpdates (in List<Job> data);
+	void getApplications (boolean forceUpdate);
+	void getInterviews (boolean forceUpdate);
+	void getJobDescription (String jobId);
+	void checkForUpdates ();
+	int getLastNetworkError();
 }

@@ -1,14 +1,17 @@
 package com.jobmine.common;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpProtocolParams;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,88 +19,96 @@ import org.jsoup.select.Elements;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 import com.jobmine.models.Interview;
 import com.jobmine.models.Job;
 
 public class JobmineNetworkRequest {
-
-	public static String getJobDescription (Context context, String jobId) {
+	
+	public static final int INVALID_ID_PASS = 0;
+	public static final int INVALID_TIME = 1;
+	public static final int UNKNOWN_ERROR = 2;
+	public static final int SUCCESS = 3;
+	public static final int SUCCESS_NO_UPDATE = 4;
+	
+	private static int lastError = -1;
+	
+	public static synchronized String getJobDescription (Context context, String jobId) {
 		
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpResponse response = null;
+		String decodedResult = "";
 		String descriptionText = "";
-		String userName, pwd;
-		
-		//Set username/password
-		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
-		userName = settings.getString(Constants.userNameKey, "");
-		pwd = settings.getString(Constants.pwdKey, "");
 		
 		try {
+			response = login(context, client); //login to jobmine
+			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
 			
-			DefaultHttpClient client = new DefaultHttpClient();
+			if (decodedResult.contains("Your User ID and/or Password are invalid.")) {
+				lastError = INVALID_ID_PASS;
+				return null;
+			} else if (decodedResult.contains("is not authorized for this time period") || decodedResult.contains("Invalid signon time")) {
+				lastError = INVALID_TIME;
+				return null;
+			}
 			
-			HttpPost post = new HttpPost(
-					"https://jobmine.ccol.uwaterloo.ca/psp/SS/?cmd=login&"
-							+ "userid=" + userName + "&" + "pwd=" + pwd + "&" + "submit=Submit");
-			
-			HttpResponse resp = client.execute(post);
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			resp.getEntity().writeTo(stream);
+			response = getJobDescriptionResponse(client, jobId);
+			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
 
-			post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_JOBDTLS?UW_CO_JOB_ID="+jobId);
-			resp = client.execute(post);
-			stream = new ByteArrayOutputStream();
-			resp.getEntity().writeTo(stream);
-			Document table = Jsoup.parse(new String(stream.toByteArray()));
+			response = logout(client);
+			response.getEntity().consumeContent();
+			
+			Document table = Jsoup.parse(decodedResult);
 			Element description = table.getElementById("UW_CO_JOBDTL_VW_UW_CO_JOB_DESCR");
 			descriptionText = description.html(); 
-			post = new HttpPost(
-					"https://jobmine.ccol.uwaterloo.ca/psp/SS/EMPLOYEE/WORK/?cmd=logout");
-			client.execute(post);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			lastError =  UNKNOWN_ERROR;
+			return null;
 		}
 		
+		lastError =  SUCCESS;
 		return descriptionText;
 	}
 	
-	public static ArrayList<Job> getJobmine (Context context) {
-		
-		String userName, pwd;
-		
-		//Set username/password
-		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
-		userName = settings.getString(Constants.userNameKey, "");
-		pwd = settings.getString(Constants.pwdKey, "");
-
-		ArrayList<Job> jobies = new ArrayList<Job>();
-
+	public static synchronized ArrayList<Job> getApplications (Context context, boolean forceUpdate) {
+	
+		long now = System.currentTimeMillis() / 1000l;
+		long prev = getPref (context, Constants.PREFERENCE_LAST_UPDATE_TIME_APPS, 0);
+		if (now - prev < Constants.LAST_UPDATE_TIME_TRESHOLD && !forceUpdate) {
+			lastError = SUCCESS_NO_UPDATE;
+			return null;
+		}
+			
 		DefaultHttpClient client = new DefaultHttpClient();
-
-		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psp/SS/?cmd=login&" + "userid=" + userName + "&" + "pwd=" + pwd + "&" + "submit=Submit");
+		HttpResponse response = null;
+		String decodedResult = "";
+		
+		ArrayList<Job> jobies = new ArrayList<Job>();
 		
 		try {
-			HttpResponse resp = client.execute(post);
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			resp.getEntity().consumeContent();
-
-			post = new HttpPost(
-					"https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_APP_SUMMARY.GBL?pslnkid=UW_CO_APP_SUMMARY_LINK&FolderPath=PORTAL_ROOT_OBJECT.UW_CO_APP_SUMMARY_LINK&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_APP_SUMMARY.GBL%3fpslnkid%3dUW_CO_APP_SUMMARY_LINK&PortalContentURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_APP_SUMMARY.GBL%3fpslnkid%3dUW_CO_APP_SUMMARY_LINK&PortalContentProvider=WORK&PortalCRefLabel=Applications&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsp%2fSS%2f&PortalURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2f&PortalHostNode=WORK&NoCrumbs=yes&PortalKeyStruct=yes");// ?ICType=Panel&Menu=UW_CO_STUDENTS&Market=GBL&PanelGroupName=UW_CO_APP_SUMMARY&RL=&target=main0&navc=5170");
-			resp = client.execute(post);
-			stream = new ByteArrayOutputStream();
-			resp.getEntity().writeTo(stream);
-			Document table = Jsoup.parse(new String(stream.toByteArray()));
-
-			post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psp/SS/EMPLOYEE/WORK/?cmd=logout");
-			client.execute(post);
-			Elements element = table.getElementsByTag("table");
-			if (element.size() < 6) {
+			response = login(context, client); //login to jobmine
+			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
+			
+			if (decodedResult.contains("Your User ID and/or Password are invalid.")) {
+				lastError = INVALID_ID_PASS;
+				return null;
+			} else if (decodedResult.contains("is not authorized for this time period") || decodedResult.contains("Invalid signon time")) {
+				lastError = INVALID_TIME;
 				return null;
 			}
+			
+			response = getApplicationsResponse (client);
+			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
+
+			response = logout(client);
+			response.getEntity().consumeContent();
+			
+			Document table = Jsoup.parse(decodedResult);
+
+			Elements element = table.getElementsByTag("table");
 			Element b = element.get(5);
 			Elements c = b.getAllElements();
 			Job tempJob = new Job();
@@ -136,22 +147,29 @@ public class JobmineNetworkRequest {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<Job>();
+			lastError =  UNKNOWN_ERROR;
+			return null;
 		}
 		
+		setPref (context, Constants.PREFERENCE_LAST_UPDATE_TIME_APPS, System.currentTimeMillis() / 1000l);
+		lastError = SUCCESS;
 		return jobies;
 	}
 	
-	public static ArrayList<Interview> getInterviews(Context context) {
+	public static synchronized ArrayList<Interview> getInterviews (Context context, boolean forceUpdate) {
 		
-		String userName, pwd;
+		long now = System.currentTimeMillis() / 1000l;
+		long prev = getPref (context, Constants.PREFERENCE_LAST_UPDATE_TIME_INTER, 0);
+		if (now - prev < Constants.LAST_UPDATE_TIME_TRESHOLD && !forceUpdate) {
+			lastError = SUCCESS_NO_UPDATE;
+			return null;
+		}
 		
-		//Set username/password
-		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
-		userName = settings.getString(Constants.userNameKey, "");
-		pwd = settings.getString(Constants.pwdKey, "");
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpResponse response = null;
+		String decodedResult = "";
 		
-		ArrayList<String> emplyNameList,titleList,dateList,lengthList,timeList,interviewerList,idList;
+		ArrayList<String> emplyNameList,titleList,dateList,lengthList,timeList,interviewerList,idList,typeList,roomList,instructionsList,statusList;
 		ArrayList<Interview> interviews = new ArrayList<Interview>();
 		
 		emplyNameList = new ArrayList<String>();
@@ -161,25 +179,30 @@ public class JobmineNetworkRequest {
 		timeList = new ArrayList<String>();
 		interviewerList = new ArrayList<String>();
 		idList = new ArrayList<String>();
+		typeList = new ArrayList<String>();
+		roomList = new ArrayList<String>();
+		instructionsList = new ArrayList<String>();
+		statusList = new ArrayList<String>();
 		
 		try {
+			response = login(context, client); //login to jobmine
+			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
+			
+			if (decodedResult.contains("Your User ID and/or Password are invalid.")) {
+				lastError = INVALID_ID_PASS;
+				return null;
+			} else if (decodedResult.contains("is not authorized for this time period") || decodedResult.contains("Invalid signon time")) {
+				lastError = INVALID_TIME;
+				return null;
+			}
+			
+			response = getInterviewsResponse (context, client);
+			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
 
-			DefaultHttpClient client = new DefaultHttpClient();
-			HttpProtocolParams.setUserAgent(client.getParams(),"Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-			HttpPost post = new HttpPost(
-					"https://jobmine.ccol.uwaterloo.ca/psp/SS/?cmd=login&"
-							+ "userid=" + userName + "&" + "pwd=" + pwd + "&" + "submit=Submit");
-
-			HttpResponse resp = client.execute(post);
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			resp.getEntity().consumeContent();
-
-			post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_STU_INTVS.GBL?UW_CO_STU_ID="+userName+"&amp;PortalActualURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_STU_INTVS.GBL%3fUW_CO_STU_ID%3d20378462&amp;PortalContentURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_STU_INTVS.GBL&amp;PortalContentProvider=WORK&amp;PortalCRefLabel=Interviews&amp;PortalRegistryName=EMPLOYEE&amp;PortalServletURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsp%2fSS%2f&amp;PortalURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2f&amp;PortalHostNode=WORK&amp;NoCrumbs=yes&amp;PortalKeyStruct=yes");
-			resp = client.execute(post);
-			stream = new ByteArrayOutputStream();
-			resp.getEntity().writeTo(stream);
-			Document webpage = Jsoup.parse(stream.toString());
-
+			response = logout(client);
+			response.getEntity().consumeContent();
+			
+			Document webpage = Jsoup.parse(decodedResult);
 			Element table = webpage.getElementById("UW_CO_STUD_INTV$scroll$0");
 			Elements tableElements = table.getAllElements();
 			for(int i = 0; i<tableElements.size(); i++){
@@ -210,11 +233,20 @@ public class JobmineNetworkRequest {
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					interviewerList.add(tableElements.get(i).text());
 				}
+				
+				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_INTV_TYPE") && tableElements.get(i).hasText()) {
+					typeList.add(tableElements.get(i).text());
+				}
+				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_ROOM_ID") && tableElements.get(i).hasText()) {
+					roomList.add(tableElements.get(i).text());
+				}
+				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_SCHED_INST") && tableElements.get(i).hasText()) {
+					instructionsList.add(tableElements.get(i).text());
+				}
+				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_JOB_STATUS") && tableElements.get(i).hasText()) {
+					statusList.add(tableElements.get(i).text());
+				}
 			}
-
-			post = new HttpPost(
-					"https://jobmine.ccol.uwaterloo.ca/psp/SS/EMPLOYEE/WORK/?cmd=logout");
-			client.execute(post);
 			
 			for (int i = 0; i < emplyNameList.size(); i++) {
 				Interview in = new Interview();
@@ -225,19 +257,118 @@ public class JobmineNetworkRequest {
 				in.time = timeList.get(i);
 				in.interviewer = interviewerList.get(i);
 				in.id = idList.get(i);
+				in.type = typeList.get(i);
+				in.room = roomList.get(i);
+				in.instructions = instructionsList.get(i);
+				in.status = statusList.get(i);
 				
-				if (!in.id.isEmpty()) {
+				if (!in.id.trim().isEmpty()) {
 					interviews.add(in);
 				}
 				
 			}
 			
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<Interview>();
+			lastError =  UNKNOWN_ERROR;
+			return null;
 		}
 		
+		setPref (context, Constants.PREFERENCE_LAST_UPDATE_TIME_INTER, System.currentTimeMillis() / 1000l);
+		lastError = SUCCESS;
 		return interviews;
 	}
 	
+	private static String httpStreamToString (InputStream stream, Header encoding) throws IOException {
+		if (encoding != null && encoding.getValue().equals("gzip")) {
+			return decryptGZIPStream(stream);
+		} else {
+			return decryptStream(stream);
+		}
+	}
+	
+	private static String decryptGZIPStream (InputStream input) throws IOException {
+		GZIPInputStream stream = new GZIPInputStream(input);
+		StringBuffer buffer = new StringBuffer ("");
+		
+		byte tempBytes [] = new byte [1024];
+		int bytesRead = 0;
+		
+		while ((bytesRead = stream.read (tempBytes, 0, 1024)) >= 0) {
+		    buffer.append (new String (tempBytes, 0, bytesRead));
+		}
+
+		return buffer.toString();
+	}
+	
+	private static String decryptStream (InputStream stream) throws IOException {
+    	BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+    	StringBuilder buffer = new StringBuilder("");
+    	String line = null;
+    	
+    	while ((line = bufferedReader.readLine()) != null) {
+    		buffer.append(line);
+    	} 
+    	
+    	return buffer.toString();
+	}
+	
+	private static HttpResponse login (Context context, DefaultHttpClient client) throws ClientProtocolException, IOException {
+		
+		String userName, pwd;
+		
+		//Set username/password
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		userName = settings.getString(Constants.userNameKey, "");
+		pwd = settings.getString(Constants.pwdKey, "");
+		
+		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psp/SS/?cmd=login&" + "userid=" + userName + "&" + "pwd=" + pwd + "&" + "submit=Submit");
+		post.addHeader("Accept-Encoding", "gzip,deflate");
+		return client.execute(post);
+	}
+	
+	private static HttpResponse logout (DefaultHttpClient client) throws ClientProtocolException, IOException {
+		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psp/SS/EMPLOYEE/WORK/?cmd=logout");
+		post.addHeader("Accept-Encoding", "gzip,deflate");
+		return client.execute(post);
+	}
+	
+	private static HttpResponse getApplicationsResponse (DefaultHttpClient client) throws ClientProtocolException, IOException {
+		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_APP_SUMMARY.GBL?pslnkid=UW_CO_APP_SUMMARY_LINK&FolderPath=PORTAL_ROOT_OBJECT.UW_CO_APP_SUMMARY_LINK&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_APP_SUMMARY.GBL%3fpslnkid%3dUW_CO_APP_SUMMARY_LINK&PortalContentURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_APP_SUMMARY.GBL%3fpslnkid%3dUW_CO_APP_SUMMARY_LINK&PortalContentProvider=WORK&PortalCRefLabel=Applications&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsp%2fSS%2f&PortalURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2f&PortalHostNode=WORK&NoCrumbs=yes&PortalKeyStruct=yes");
+		post.addHeader("Accept-Encoding", "gzip,deflate");
+		return client.execute(post);
+	}
+	
+	private static HttpResponse getJobDescriptionResponse (DefaultHttpClient client, String jobId) throws ClientProtocolException, IOException {
+		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_JOBDTLS?UW_CO_JOB_ID="+jobId);
+		post.addHeader("Accept-Encoding", "gzip,deflate");
+		return client.execute(post);
+	}
+	
+	private static HttpResponse getInterviewsResponse (Context context, DefaultHttpClient client) throws ClientProtocolException, IOException {
+		String userName;
+		
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		userName = settings.getString(Constants.userNameKey, "");
+		
+		HttpPost post = new HttpPost("https://jobmine.ccol.uwaterloo.ca/psc/SS/EMPLOYEE/WORK/c/UW_CO_STUDENTS.UW_CO_STU_INTVS.GBL?UW_CO_STU_ID="+userName+"&amp;PortalActualURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_STU_INTVS.GBL%3fUW_CO_STU_ID%3d20378462&amp;PortalContentURL=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2fEMPLOYEE%2fWORK%2fc%2fUW_CO_STUDENTS.UW_CO_STU_INTVS.GBL&amp;PortalContentProvider=WORK&amp;PortalCRefLabel=Interviews&amp;PortalRegistryName=EMPLOYEE&amp;PortalServletURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsp%2fSS%2f&amp;PortalURI=https%3a%2f%2fjobmine.ccol.uwaterloo.ca%2fpsc%2fSS%2f&amp;PortalHostNode=WORK&amp;NoCrumbs=yes&amp;PortalKeyStruct=yes");
+		post.addHeader("Accept-Encoding", "gzip,deflate");
+		return client.execute(post);
+	}
+	
+	private static long getPref (Context context, String key, long defaultValue) {
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		return settings.getLong(key, defaultValue);
+	}
+	
+	private static void setPref (Context context, String key, long value) {
+		SharedPreferences settings = new EncryptedSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+		Editor e = settings.edit();
+		e.putLong(key, value);
+		e.commit();
+	}
+	
+	public static int getLastNetworkError () {
+		return lastError;
+	}
 }

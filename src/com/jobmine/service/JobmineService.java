@@ -1,7 +1,6 @@
 package com.jobmine.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
@@ -27,48 +26,48 @@ public class JobmineService extends Service {
 	private JobmineInterface.Stub serviceInterface = new JobmineInterface.Stub() {
 
 		@Override
-		public List<Job> getApplications () throws RemoteException {
-			ArrayList<Job> jobs = JobmineNetworkRequest.getJobmine(JobmineService.this);
+		public void getApplications (boolean forceUpdate) throws RemoteException {
+			ArrayList<Job> jobs = JobmineNetworkRequest.getApplications(JobmineService.this, forceUpdate);
 			
 			if (jobs != null && jobs.size() > 0) {
 				JobmineProvider.updateOrInsertApplications(jobs, getContentResolver());
 			}
-			
-			return jobs;
 		}
 		
 		@Override
-		public List<Interview> getInterviews () throws RemoteException {
-			ArrayList<Interview> interviews = JobmineNetworkRequest.getInterviews (JobmineService.this);
+		public void getInterviews (boolean forceUpdate) throws RemoteException {
+			ArrayList<Interview> interviews = JobmineNetworkRequest.getInterviews (JobmineService.this, forceUpdate);
 			
-			return interviews;
-		}
-
-		@Override
-		public String getJobDescription (String jobId) throws RemoteException {
-			Job j = JobmineProvider.getApplication(jobId, getContentResolver());
-			
-			if (j == null) {
-				return "";	
-				
-			} else if (j.description.isEmpty()) {
-				//Make network request
-				String description = JobmineNetworkRequest.getJobDescription (JobmineService.this, jobId);
-	
-				//Update database and return 
-				JobmineProvider.updateJobDescription(jobId, description, getContentResolver());
-				return description;
-				
-			} else {
-				return j.description;
+			if (interviews != null && interviews.size() > 0) {
+				JobmineProvider.deleteAllInterviews(getContentResolver());
+				JobmineProvider.addInterviews(interviews, getContentResolver());
 			}
 		}
 
 		@Override
-		public void checkForUpdates(List<Job> data) throws RemoteException {
-			beginUpdate ((ArrayList<Job>) data);
+		public void getJobDescription (String jobId) throws RemoteException {
+			Job j = JobmineProvider.getApplication(jobId, getContentResolver());
+			
+			if (j.description.trim().isEmpty()) {
+				//Make network request
+				String description = JobmineNetworkRequest.getJobDescription(JobmineService.this, jobId);
+	
+				//Update database and return 
+				JobmineProvider.updateJobDescription(jobId, description, getContentResolver());	
+			}
 		}
 
+		@Override
+		public void checkForUpdates() throws RemoteException {
+			beginUpdate ();
+		}
+
+		@Override
+		public int getLastNetworkError() throws RemoteException {
+			return JobmineNetworkRequest.getLastNetworkError();
+		}
+
+		
 	};
 	
 	@Override
@@ -88,7 +87,7 @@ public class JobmineService extends Service {
 
 		// Perform necessary action for updates
 		if (startReason == JobmineAlarmManager.START_SERVICE_FOR_UPDATES) {
-			beginUpdate (null);
+			beginUpdate ();
 		}
 
 		return super.onStartCommand(intent, flags, startId);
@@ -105,8 +104,8 @@ public class JobmineService extends Service {
 		return serviceInterface;
 	}
 	
-	private void beginUpdate (ArrayList<Job> newData) {
-		Thread thread = new Thread(new JobmineUpdaterTask(this, newData));
+	private void beginUpdate () {
+		Thread thread = new Thread(new JobmineUpdaterTask(this));
 		thread.start();
 	}
 

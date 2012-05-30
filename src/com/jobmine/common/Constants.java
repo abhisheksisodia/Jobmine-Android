@@ -19,7 +19,9 @@ public class Constants {
 	
 	//Time interval for checking for new interviews
 	public static final int SERVICE_UPDATE_TIME_INTERVAL = 60*30;
-	
-	public static final String PREFERENCE_LAST_UPDATE_TIME = "last_update_time";
+
 	public static final int LAST_UPDATE_TIME_TRESHOLD = 5 * MILLI_PER_MINUTE;
+	
+	public static final String PREFERENCE_LAST_UPDATE_TIME_APPS = "last_update_time_apps";
+	public static final String PREFERENCE_LAST_UPDATE_TIME_INTER = "last_update_time_inter";
 }

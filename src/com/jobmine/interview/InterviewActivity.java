@@ -44,7 +44,6 @@ import com.jobmine.service.JobmineInterface;
 
 public class InterviewActivity extends BindingActivity {
 	InterviewAdapter adapter;
-	List<Interview> interviews;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,12 +94,13 @@ public class InterviewActivity extends BindingActivity {
 			
 			@Override
 			protected List<Interview> doInBackground(Void... params) {
-				List<Interview> interview = new ArrayList<Interview>();
 				JobmineInterface jobmineInterface = getServiceinterface();
+				List<Interview> interviews = new ArrayList<Interview>();
+				
 				try {
-					interviews = jobmineInterface.getInterviews();
+					jobmineInterface.getInterviews(false);
+					interviews = JobmineProvider.getInterviews(getContentResolver());
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

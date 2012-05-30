@@ -51,9 +51,13 @@ public class JobDetailsActivity extends BindingActivity {
 		@Override
 		protected Spanned doInBackground(String... params) {
 			Spanned descriptionText = null;
+
+			String jobId = params [0];
 			
 			try {
-				descriptionText = Html.fromHtml(getServiceinterface().getJobDescription(params [0]));
+				getServiceinterface().getJobDescription(jobId);
+				Job j = JobmineProvider.getApplication(jobId, getContentResolver());
+				descriptionText = Html.fromHtml(j.description);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -79,7 +83,7 @@ public class JobDetailsActivity extends BindingActivity {
 		//Get job id from extra info
 		String jobId = getIntent().getStringExtra(Constants.idKey);
 		
-		if (!jobId.isEmpty()) {
+		if (!jobId.trim().isEmpty()) {
 			//Get the job info from provider
 			Job currentJob = JobmineProvider.getApplication(jobId, getContentResolver());
 			
