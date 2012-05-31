@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/interview_layout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="20dp"
+    android:clipToPadding="true"
+    android:background="@drawable/white"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/interview_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#000000"
         android:textSize="22dp" />
 
     <TextView
         android:id="@+id/interview_employer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#000000"
         android:textSize="18dp" />
 
     <LinearLayout
@@ -23,23 +28,34 @@
 
         <TextView
             android:id="@+id/interview_time"
-            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
             android:textSize="14dp" />
 
         <TextView
             android:id="@+id/interview_date"
-             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
             android:textSize="14dp" />
 
         <TextView
             android:id="@+id/interview_length"
-             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/interview_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
             android:textSize="14dp" />
     </LinearLayout>
 

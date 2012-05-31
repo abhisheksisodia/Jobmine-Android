@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: D:\\In Progress\\Java\\Android\\Jobmine-Android\\src\\com\\jobmine\\service\\JobmineInterface.aidl
+ * Original file: C:\\Users\\Christopher\\workspace\\Jobmine-Android\\src\\com\\jobmine\\service\\JobmineInterface.aidl
  */
 package com.jobmine.service;
 public interface JobmineInterface extends android.os.IInterface

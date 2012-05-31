@@ -65,7 +65,7 @@ public class InterviewActivity extends BindingActivity {
 	protected void onServiceConnected() {
 		super.onServiceConnected();
 
-		getTask().execute();
+		getTask(false).execute();
 	}
 	
 	@Override
@@ -75,7 +75,8 @@ public class InterviewActivity extends BindingActivity {
 		return true;
 	}
 	
-	private AsyncTask<Void, Void, List<Interview>> getTask(){
+	
+	private AsyncTask<Void, Void, List<Interview>> getTask(final boolean isForced){
 		return new AsyncTask<Void, Void, List<Interview>>() {
 			private ProgressDialog dialog = null;
 			
@@ -98,7 +99,7 @@ public class InterviewActivity extends BindingActivity {
 				List<Interview> interviews = new ArrayList<Interview>();
 				
 				try {
-					jobmineInterface.getInterviews(false);
+					jobmineInterface.getInterviews(isForced);
 					interviews = JobmineProvider.getInterviews(getContentResolver());
 				} catch (RemoteException e) {
 					e.printStackTrace();
@@ -126,7 +127,7 @@ public class InterviewActivity extends BindingActivity {
 		switch (item.getItemId()) {
 
 		case R.id.refresh:
-			getTask().execute();
+			getTask(true).execute();
 			JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 			break;
 		case R.id.applications:
