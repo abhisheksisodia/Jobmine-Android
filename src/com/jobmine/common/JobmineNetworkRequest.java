@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
@@ -170,6 +171,7 @@ public class JobmineNetworkRequest {
 		String decodedResult = "";
 		
 		ArrayList<String> emplyNameList,titleList,dateList,lengthList,timeList,interviewerList,idList,typeList,roomList,instructionsList,statusList;
+		ArrayList<String> gIdList, gEmplyNameList, gTitleList, gDateList, gStartTimeList, gEndTimeList, gRoomList, gInstructionsList;
 		ArrayList<Interview> interviews = new ArrayList<Interview>();
 		
 		emplyNameList = new ArrayList<String>();
@@ -183,6 +185,16 @@ public class JobmineNetworkRequest {
 		roomList = new ArrayList<String>();
 		instructionsList = new ArrayList<String>();
 		statusList = new ArrayList<String>();
+		
+		//Arrays for Group interviews
+		gIdList = new ArrayList<String>();
+		gEmplyNameList = new ArrayList<String>();
+		gTitleList = new ArrayList<String>();
+		gDateList = new ArrayList<String>();
+		gStartTimeList = new ArrayList<String>();
+		gEndTimeList = new ArrayList<String>();
+		gRoomList = new ArrayList<String>();
+		gInstructionsList = new ArrayList<String>();
 		
 		try {
 			response = login(context, client); //login to jobmine
@@ -206,47 +218,85 @@ public class JobmineNetworkRequest {
 			Element table = webpage.getElementById("UW_CO_STUD_INTV$scroll$0");
 			Elements tableElements = table.getAllElements();
 			for(int i = 0; i<tableElements.size(); i++){
-				if (tableElements.get(i).id().contains("UW_CO_STUD_INTV_UW_CO_JOB_ID")
+				String id = tableElements.get(i).id();
+				if (id.contains("UW_CO_STUD_INTV_UW_CO_JOB_ID")
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					idList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("UW_CO_STUD_INTV_UW_CO_PARENT_NAME")
+				else if (id.contains("UW_CO_STUD_INTV_UW_CO_PARENT_NAME")
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					emplyNameList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("UW_CO_JOBID_HL")
+				else if (id.contains("UW_CO_JOBID_HL")
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					titleList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("UW_CO_STUD_INTV_UW_CO_CHAR_DATE")
+				else if (id.contains("UW_CO_STUD_INTV_UW_CO_CHAR_DATE")
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					dateList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("UW_CO_STUD_INTV_UW_CO_CHAR_STIME") && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+				else if (id.contains("UW_CO_STUD_INTV_UW_CO_CHAR_STIME") && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					timeList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("UW_CO_STUD_INTV_UW_CO_INTV_DUR")
+				else if (id.contains("UW_CO_STUD_INTV_UW_CO_INTV_DUR")
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					lengthList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("UW_CO_STUD_INTV_UW_CO_DESCR_50")
+				else if (id.contains("UW_CO_STUD_INTV_UW_CO_DESCR_50")
 						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
 					interviewerList.add(tableElements.get(i).text());
 				}
 				
-				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_INTV_TYPE") && tableElements.get(i).hasText()) {
+				else if (id.contains("win0divUW_CO_STUD_INTV_UW_CO_INTV_TYPE") && tableElements.get(i).hasText()) {
 					typeList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_ROOM_ID") && tableElements.get(i).hasText()) {
+				else if (id.contains("win0divUW_CO_STUD_INTV_UW_CO_ROOM_ID") && tableElements.get(i).hasText()) {
 					roomList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_SCHED_INST") && tableElements.get(i).hasText()) {
+				else if (id.contains("win0divUW_CO_STUD_INTV_UW_CO_SCHED_INST") && tableElements.get(i).hasText()) {
 					instructionsList.add(tableElements.get(i).text());
 				}
-				if (tableElements.get(i).id().contains("win0divUW_CO_STUD_INTV_UW_CO_JOB_STATUS") && tableElements.get(i).hasText()) {
+				else if (id.contains("win0divUW_CO_STUD_INTV_UW_CO_JOB_STATUS") && tableElements.get(i).hasText()) {
 					statusList.add(tableElements.get(i).text());
 				}
 			}
+			
+			table = webpage.getElementById("UW_CO_GRP_STU_V$scroll$0");
+			tableElements = table.getAllElements();
+			for(int i = 0; i<tableElements.size(); i++){
+				if (tableElements.get(i).id().contains("UW_CO_GRP_STU_V_UW_CO_JOB_ID")
+						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+					gIdList.add(tableElements.get(i).text());
+				}
+				else if (tableElements.get(i).id().contains("UW_CO_GRP_STU_V_UW_CO_PARENT_NAME")
+						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+					gEmplyNameList.add(tableElements.get(i).text());
+				}
+				else if (tableElements.get(i).id().contains("UW_CO_JOBID_HL")
+						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+					gTitleList.add(tableElements.get(i).text());
+				}
+				else if (tableElements.get(i).id().contains("UW_CO_GRP_STU_V_UW_CO_CHAR_DATE")
+						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+					gDateList.add(tableElements.get(i).text());
+				}
+				else if (tableElements.get(i).id().contains("UW_CO_GRP_STU_V_UW_CO_CHAR_STIME") && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+					gStartTimeList.add(tableElements.get(i).text());
+				}
+				else if (tableElements.get(i).id().contains("UW_CO_GRP_STU_V_UW_CO_CHAR_ETIME")
+						&& tableElements.get(i).hasText() && !(tableElements.get(i).text().equals(tableElements.get(i+1).text()))) {
+					gEndTimeList.add(tableElements.get(i).text());
+				}
+				else if (tableElements.get(i).id().contains("win0divUW_CO_GRP_STU_V_UW_CO_ROOM_ID") && tableElements.get(i).hasText()) {
+					gRoomList.add(tableElements.get(i).text());
+				}
+				
+				else if (tableElements.get(i).id().contains("win0divUW_CO_GRP_STU_V_UW_CO_SCHED_DESCR") && tableElements.get(i).hasText()) {
+					gInstructionsList.add(tableElements.get(i).text());
+				}
+			}
+			
+			
 			
 			for (int i = 0; i < emplyNameList.size(); i++) {
 				Interview in = new Interview();
@@ -261,6 +311,26 @@ public class JobmineNetworkRequest {
 				in.room = roomList.get(i);
 				in.instructions = instructionsList.get(i);
 				in.status = statusList.get(i);
+				
+				if (!in.id.trim().isEmpty()) {
+					interviews.add(in);
+				}
+				
+			}
+			
+			for (int i = 0; i < gEmplyNameList.size(); i++) {
+				Interview in = new Interview();
+				SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+				in.type = "Group";
+				in.employerName = gEmplyNameList.get(i);
+				in.title = gTitleList.get(i);
+				in.date = gDateList.get(i);
+				in.time = gStartTimeList.get(i);
+				in.length = ((Long) ((df.parse(gEndTimeList.get(i)).getTime() - df.parse(gStartTimeList.get(i)).getTime())/ (1000 * 60))).toString();
+				
+				in.id = gIdList.get(i);
+				in.room = gRoomList.get(i);
+				in.instructions = gInstructionsList.get(i);
 				
 				if (!in.id.trim().isEmpty()) {
 					interviews.add(in);
