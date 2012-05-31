@@ -128,7 +128,6 @@ public class InterviewActivity extends BindingActivity {
 
 		case R.id.refresh:
 			getTask(true).execute();
-			JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
 			break;
 		case R.id.applications:
 			Intent intent = new Intent(InterviewActivity.this, MainActivity.class);

@@ -52,7 +52,7 @@ public class JobDetailsActivity extends BindingActivity {
 		protected Spanned doInBackground(String... params) {
 			Spanned descriptionText = null;
 
-			String jobId = params [0];
+			String jobId = getIntent().getStringExtra(Constants.idKey);
 			
 			try {
 				getServiceinterface().getJobDescription(jobId);
@@ -136,8 +136,7 @@ public class JobDetailsActivity extends BindingActivity {
 		switch (item.getItemId()) {
 
 		case R.id.refresh:
-			(new GetJobDescriptionTask()).execute();
-			JobmineAlarmManager.setUpdateAlarm(this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
+			new GetJobDescriptionTask().execute();
 			break;
 		case R.id.applications:
 			Intent intent = new Intent(JobDetailsActivity.this, MainActivity.class);

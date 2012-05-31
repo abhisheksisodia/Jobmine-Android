@@ -75,7 +75,7 @@ public class MainActivity extends BindingActivity {
 		protected List<Job> doInBackground(Boolean... arg0) {
 			List<Job> jobs = new ArrayList<Job>();
 			
-			JobmineAlarmManager.setUpdateAlarm(MainActivity.this, Constants.SERVICE_UPDATE_TIME_INTERVAL);
+			JobmineAlarmManager.setUpdateAlarm(MainActivity.this, Constants.SERVICE_UPDATE_TIME_INTERVAL_SECONDS);
 			boolean forceUpdate = arg0 [0];
 			
 			try {

@@ -78,7 +78,7 @@ public class JobmineNetworkRequest {
 	
 		long now = System.currentTimeMillis() / 1000l;
 		long prev = getPref (context, Constants.PREFERENCE_LAST_UPDATE_TIME_APPS, 0);
-		if (now - prev < Constants.LAST_UPDATE_TIME_TRESHOLD && !forceUpdate) {
+		if (now - prev < Constants.LAST_UPDATE_TIME_TRESHOLD_SECONDS && !forceUpdate) {
 			lastError = SUCCESS_NO_UPDATE;
 			return null;
 		}
@@ -161,7 +161,7 @@ public class JobmineNetworkRequest {
 		
 		long now = System.currentTimeMillis() / 1000l;
 		long prev = getPref (context, Constants.PREFERENCE_LAST_UPDATE_TIME_INTER, 0);
-		if (now - prev < Constants.LAST_UPDATE_TIME_TRESHOLD && !forceUpdate) {
+		if (now - prev < Constants.LAST_UPDATE_TIME_TRESHOLD_SECONDS && !forceUpdate) {
 			lastError = SUCCESS_NO_UPDATE;
 			return null;
 		}

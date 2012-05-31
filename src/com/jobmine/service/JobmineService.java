@@ -26,35 +26,49 @@ public class JobmineService extends Service {
 	private JobmineInterface.Stub serviceInterface = new JobmineInterface.Stub() {
 
 		@Override
-		public void getApplications (boolean forceUpdate) throws RemoteException {
+		public boolean getApplications (boolean forceUpdate) throws RemoteException {
 			ArrayList<Job> jobs = JobmineNetworkRequest.getApplications(JobmineService.this, forceUpdate);
 			
 			if (jobs != null && jobs.size() > 0) {
 				JobmineProvider.updateOrInsertApplications(jobs, getContentResolver());
 			}
+			
+			return JobmineNetworkRequest.getLastNetworkError() == JobmineNetworkRequest.SUCCESS || 
+					JobmineNetworkRequest.getLastNetworkError() == JobmineNetworkRequest.SUCCESS_NO_UPDATE;
 		}
 		
 		@Override
-		public void getInterviews (boolean forceUpdate) throws RemoteException {
+		public boolean getInterviews (boolean forceUpdate) throws RemoteException {
 			ArrayList<Interview> interviews = JobmineNetworkRequest.getInterviews (JobmineService.this, forceUpdate);
 			
 			if (interviews != null && interviews.size() > 0) {
 				JobmineProvider.deleteAllInterviews(getContentResolver());
 				JobmineProvider.addInterviews(interviews, getContentResolver());
 			}
+			
+			return JobmineNetworkRequest.getLastNetworkError() == JobmineNetworkRequest.SUCCESS || 
+					JobmineNetworkRequest.getLastNetworkError() == JobmineNetworkRequest.SUCCESS_NO_UPDATE;
 		}
 
 		@Override
-		public void getJobDescription (String jobId) throws RemoteException {
+		public boolean getJobDescription (String jobId) throws RemoteException {
 			Job j = JobmineProvider.getApplication(jobId, getContentResolver());
+			String description = j.description;
 			
-			if (j.description.trim().isEmpty()) {
+			if (description.trim().isEmpty()) {
 				//Make network request
-				String description = JobmineNetworkRequest.getJobDescription(JobmineService.this, jobId);
+				description = JobmineNetworkRequest.getJobDescription(JobmineService.this, jobId);
 	
 				//Update database and return 
-				JobmineProvider.updateJobDescription(jobId, description, getContentResolver());	
+				if (description != null && !description.isEmpty()) {
+					JobmineProvider.updateJobDescription(jobId, description, getContentResolver());	
+				}
+				
+				return JobmineNetworkRequest.getLastNetworkError() == JobmineNetworkRequest.SUCCESS || 
+						JobmineNetworkRequest.getLastNetworkError() == JobmineNetworkRequest.SUCCESS_NO_UPDATE;
 			}
+			
+			return true;
 		}
 
 		@Override

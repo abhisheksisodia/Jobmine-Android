@@ -19,7 +19,7 @@ public class StartupReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Logger.d ("Device was just booted!");
 		
-		JobmineAlarmManager.setUpdateAlarm(context, Constants.SERVICE_UPDATE_TIME_INTERVAL);
+		JobmineAlarmManager.setUpdateAlarm(context, Constants.SERVICE_UPDATE_TIME_INTERVAL_SECONDS);
 	}
 
 }
