@@ -29,9 +29,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jobmine.R;
+import com.jobmine.common.Common;
 import com.jobmine.common.Constants;
 import com.jobmine.common.EncryptedSharedPreferences;
 import com.jobmine.common.JobmineNetworkRequest;
@@ -47,6 +47,7 @@ public class MainActivity extends BindingActivity {
 	List<Job> jobies;
 	SharedPreferences settings;
 	Editor editor;
+	int lastNetworkError = -1;
 
 	public class getData extends AsyncTask<Boolean, Void, List<Job>> {
 
@@ -79,34 +80,25 @@ public class MainActivity extends BindingActivity {
 			boolean forceUpdate = arg0 [0];
 			
 			try {
-				getServiceinterface().getApplications(forceUpdate);
+				//If it failed, notify
+				if (!getServiceinterface().getApplications(forceUpdate)) {
+					lastNetworkError = getServiceinterface().getLastNetworkError();
+					Common.showNetworkErrorToast (MainActivity.this, lastNetworkError);
+					
+					if (lastNetworkError == JobmineNetworkRequest.INVALID_ID_PASS) {
+						editor.remove(Constants.userNameKey);
+						editor.remove(Constants.pwdKey);
+						editor.commit();
+					}
+				} else {
+					lastNetworkError = -1;
+				}
+				
+				//Always pull from Provider
 				jobs = JobmineProvider.getApplications(getContentResolver());
+				
 			} catch (RemoteException e) {
 				e.printStackTrace();
-			}
-			
-			if (jobs == null) {
-				try {
-					final int lastError = getServiceinterface().getLastNetworkError();
-					
-					runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							if (lastError == JobmineNetworkRequest.INVALID_ID_PASS) {
-								Toast.makeText(MainActivity.this, "Invalid ID/PASS.", Toast.LENGTH_SHORT).show();
-							} else if (lastError == JobmineNetworkRequest.INVALID_TIME) {
-								Toast.makeText(MainActivity.this, "Invalid Time.", Toast.LENGTH_SHORT).show();
-							} else if (lastError == JobmineNetworkRequest.UNKNOWN_ERROR) {
-								Toast.makeText(MainActivity.this, "Unknown Error.", Toast.LENGTH_SHORT).show();
-							}
-						}
-						
-					});
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 			
 			return jobs;
@@ -114,17 +106,17 @@ public class MainActivity extends BindingActivity {
 
 		@Override
 		protected void onPostExecute(List<Job> param) {
+			
 			dialog.dismiss();
-			if (param != null) {
-				jobies = param;
-				setContent(param);
+			
+			if (!settings.contains(Constants.userNameKey)) {
+				createDialog();
 			} else {
-				editor.remove(Constants.userNameKey);
-				editor.remove(Constants.pwdKey);
-				editor.commit();
-				//Toast.makeText(MainActivity.this, "Login Failed.", Toast.LENGTH_SHORT).show();
+				if (param != null) {
+					jobies = param;
+					setContent(param);
+				} 
 			}
-
 		}
 
 	}

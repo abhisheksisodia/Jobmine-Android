@@ -30,8 +30,9 @@ public class JobmineNetworkRequest {
 	public static final int INVALID_ID_PASS = 0;
 	public static final int INVALID_TIME = 1;
 	public static final int UNKNOWN_ERROR = 2;
-	public static final int SUCCESS = 3;
-	public static final int SUCCESS_NO_UPDATE = 4;
+	public static final int NO_NETWORK_CONNECTION = 3;
+	public static final int SUCCESS = 4;
+	public static final int SUCCESS_NO_UPDATE = 5;
 	
 	private static int lastError = -1;
 	
@@ -43,10 +44,16 @@ public class JobmineNetworkRequest {
 		String descriptionText = "";
 		
 		try {
+			//Detect network connection
+			if (!Common.hasNetworkConnection(context)) {
+				lastError = NO_NETWORK_CONNECTION;
+				return null;
+			}
+			
 			response = login(context, client); //login to jobmine
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
 			
-			if (decodedResult.contains("Your User ID and/or Password are invalid.")) {
+			if (decodedResult.contains("Your User ID and/or Password are invalid.") || decodedResult.contains("User ID and Password are required")) {
 				lastError = INVALID_ID_PASS;
 				return null;
 			} else if (decodedResult.contains("is not authorized for this time period") || decodedResult.contains("Invalid signon time")) {
@@ -60,6 +67,7 @@ public class JobmineNetworkRequest {
 			response = logout(client);
 			response.getEntity().consumeContent();
 			
+			//Parse description
 			Document table = Jsoup.parse(decodedResult);
 			Element description = table.getElementById("UW_CO_JOBDTL_VW_UW_CO_JOB_DESCR");
 			descriptionText = description.html(); 
@@ -90,10 +98,16 @@ public class JobmineNetworkRequest {
 		ArrayList<Job> jobies = new ArrayList<Job>();
 		
 		try {
+			//Detect network connection
+			if (!Common.hasNetworkConnection(context)) {
+				lastError = NO_NETWORK_CONNECTION;
+				return null;
+			}
+			
 			response = login(context, client); //login to jobmine
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
 			
-			if (decodedResult.contains("Your User ID and/or Password are invalid.")) {
+			if (decodedResult.contains("Your User ID and/or Password are invalid.") || decodedResult.contains("User ID and Password are required")) {
 				lastError = INVALID_ID_PASS;
 				return null;
 			} else if (decodedResult.contains("is not authorized for this time period") || decodedResult.contains("Invalid signon time")) {
@@ -197,10 +211,16 @@ public class JobmineNetworkRequest {
 		gInstructionsList = new ArrayList<String>();
 		
 		try {
+			//Detect network connection
+			if (!Common.hasNetworkConnection(context)) {
+				lastError = NO_NETWORK_CONNECTION;
+				return null;
+			}
+			
 			response = login(context, client); //login to jobmine
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
 			
-			if (decodedResult.contains("Your User ID and/or Password are invalid.")) {
+			if (decodedResult.contains("Your User ID and/or Password are invalid.") || decodedResult.contains("User ID and Password are required")) {
 				lastError = INVALID_ID_PASS;
 				return null;
 			} else if (decodedResult.contains("is not authorized for this time period") || decodedResult.contains("Invalid signon time")) {

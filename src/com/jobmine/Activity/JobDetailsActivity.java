@@ -21,11 +21,11 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.jobmine.R;
+import com.jobmine.common.Common;
 import com.jobmine.common.Constants;
 import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
-import com.jobmine.service.JobmineAlarmManager;
 
 
 public class JobDetailsActivity extends BindingActivity {
@@ -55,9 +55,15 @@ public class JobDetailsActivity extends BindingActivity {
 			String jobId = getIntent().getStringExtra(Constants.idKey);
 			
 			try {
-				getServiceinterface().getJobDescription(jobId);
+				//If it failed, notify
+				if (!getServiceinterface().getJobDescription(jobId)) {
+					Common.showNetworkErrorToast (JobDetailsActivity.this, getServiceinterface().getLastNetworkError());
+				}
+				
+				//Always pull from Provider
 				Job j = JobmineProvider.getApplication(jobId, getContentResolver());
 				descriptionText = Html.fromHtml(j.description);
+				
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
