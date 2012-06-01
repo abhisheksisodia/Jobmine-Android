@@ -52,6 +52,7 @@ public class JobmineNetworkRequest {
 			
 			response = login(context, client); //login to jobmine
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
+			response.getEntity().consumeContent();
 			
 			if (decodedResult.contains("Your User ID and/or Password are invalid.") || decodedResult.contains("User ID and Password are required")) {
 				lastError = INVALID_ID_PASS;
@@ -63,7 +64,8 @@ public class JobmineNetworkRequest {
 			
 			response = getJobDescriptionResponse(client, jobId);
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
-
+			response.getEntity().consumeContent();
+			
 			response = logout(client);
 			response.getEntity().consumeContent();
 			
@@ -106,6 +108,7 @@ public class JobmineNetworkRequest {
 			
 			response = login(context, client); //login to jobmine
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
+			response.getEntity().consumeContent();
 			
 			if (decodedResult.contains("Your User ID and/or Password are invalid.") || decodedResult.contains("User ID and Password are required")) {
 				lastError = INVALID_ID_PASS;
@@ -117,7 +120,8 @@ public class JobmineNetworkRequest {
 			
 			response = getApplicationsResponse (client);
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
-
+			response.getEntity().consumeContent();
+			
 			response = logout(client);
 			response.getEntity().consumeContent();
 			
@@ -219,6 +223,7 @@ public class JobmineNetworkRequest {
 			
 			response = login(context, client); //login to jobmine
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
+			response.getEntity().consumeContent();
 			
 			if (decodedResult.contains("Your User ID and/or Password are invalid.") || decodedResult.contains("User ID and Password are required")) {
 				lastError = INVALID_ID_PASS;
@@ -230,7 +235,8 @@ public class JobmineNetworkRequest {
 			
 			response = getInterviewsResponse (context, client);
 			decodedResult = httpStreamToString(response.getEntity().getContent(), response.getEntity().getContentEncoding());
-
+			response.getEntity().consumeContent();
+			
 			response = logout(client);
 			response.getEntity().consumeContent();
 			
@@ -318,44 +324,48 @@ public class JobmineNetworkRequest {
 			
 			
 			
-			for (int i = 0; i < emplyNameList.size(); i++) {
-				Interview in = new Interview();
-				in.employerName = emplyNameList.get(i);
-				in.title = titleList.get(i);
-				in.date = dateList.get(i);
-				in.length = lengthList.get(i);
-				in.time = timeList.get(i);
-				in.interviewer = interviewerList.get(i);
-				in.id = idList.get(i);
-				in.type = typeList.get(i);
-				in.room = roomList.get(i);
-				in.instructions = instructionsList.get(i);
-				in.status = statusList.get(i);
-				
-				if (!in.id.trim().isEmpty()) {
-					interviews.add(in);
+			if(!emplyNameList.isEmpty()){
+				for (int i = 0; i < emplyNameList.size(); i++) {
+					Interview in = new Interview();
+					in.employerName = emplyNameList.get(i);
+					in.title = titleList.get(i);
+					in.date = dateList.get(i);
+					in.length = lengthList.get(i);
+					in.time = timeList.get(i);
+					in.interviewer = interviewerList.get(i);
+					in.id = idList.get(i);
+					in.type = typeList.get(i);
+					in.room = roomList.get(i);
+					in.instructions = instructionsList.get(i);
+					in.status = statusList.get(i);
+
+					if (!in.id.trim().isEmpty()) {
+						interviews.add(in);
+					}
+
 				}
-				
 			}
-			
-			for (int i = 0; i < gEmplyNameList.size(); i++) {
-				Interview in = new Interview();
-				SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-				in.type = "Group";
-				in.employerName = gEmplyNameList.get(i);
-				in.title = gTitleList.get(i);
-				in.date = gDateList.get(i);
-				in.time = gStartTimeList.get(i);
-				in.length = ((Long) ((df.parse(gEndTimeList.get(i)).getTime() - df.parse(gStartTimeList.get(i)).getTime())/ (1000 * 60))).toString();
-				
-				in.id = gIdList.get(i);
-				in.room = gRoomList.get(i);
-				in.instructions = gInstructionsList.get(i);
-				
-				if (!in.id.trim().isEmpty()) {
-					interviews.add(in);
+
+			if(!gEmplyNameList.isEmpty()){
+				for (int i = 0; i < gEmplyNameList.size(); i++) {
+					Interview in = new Interview();
+					SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+					in.type = "Group";
+					in.employerName = gEmplyNameList.get(i);
+					in.title = gTitleList.get(i);
+					in.date = gDateList.get(i);
+					in.time = gStartTimeList.get(i);
+					in.length = ((Long) ((df.parse(gEndTimeList.get(i)).getTime() - df.parse(gStartTimeList.get(i)).getTime())/ (1000 * 60))).toString();
+
+					in.id = gIdList.get(i);
+					in.room = gRoomList.get(i);
+					in.instructions = gInstructionsList.get(i);
+
+					if (!in.id.trim().isEmpty()) {
+						interviews.add(in);
+					}
+
 				}
-				
 			}
 			
 		} catch (Exception e) {

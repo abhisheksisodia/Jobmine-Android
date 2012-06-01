@@ -80,9 +80,30 @@ public class Interview implements Parcelable {
 		}
 	};
 
+	@Override
+	public boolean equals(Object o) {
+		
+		if (o instanceof Interview) {
+			Interview another = (Interview)o;
+			boolean rslt = true;
+			
+			rslt &= employerName.equals(another.employerName);
+			rslt &= title.equals(another.title);
+			rslt &= date.equals(another.date);
+			rslt &= interviewer.equals(another.interviewer);
+			rslt &= type.equals(another.type);
+			rslt &= instructions.equals(another.instructions);
+			rslt &= id.equals(another.id);
+			
+			return rslt;
+		} else {
+			return super.equals(o);
+		}
+		
+	}
 
 	@Override
 	public int describeContents() {
 		return 0;
-	}
+	};
 }
