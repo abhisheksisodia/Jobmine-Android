@@ -2,17 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
     android:background="@drawable/paper"
-   >
-    <TextView
+    android:orientation="vertical" >
+
+    <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black" />    <TextView
+        android:textColor="@android:color/black" />
+
+    <TextView
         android:id="@+id/employer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,11 +28,11 @@
         android:layout_height="2dp"
         android:background="@android:color/black" >
     </LinearLayout>
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-
+
         <TextView
             android:id="@+id/jobstatus"
             android:layout_width="wrap_content"
@@ -40,7 +42,7 @@
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/black" />
-
+
         <TextView
             android:id="@+id/appstatus"
             android:layout_width="wrap_content"
@@ -50,7 +52,7 @@
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/black" />
-
+
         <TextView
             android:id="@+id/resumes"
             android:layout_width="wrap_content"
@@ -60,7 +62,6 @@
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/black" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -82,9 +83,10 @@
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black" />
-
         </LinearLayout>
     </ScrollView>
 
