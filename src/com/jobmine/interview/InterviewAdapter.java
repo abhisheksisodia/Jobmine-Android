@@ -33,10 +33,10 @@ public class InterviewAdapter extends BaseAdapter {
 	@Override
 	public Interview getItem(int position) {
 		Logger.d("get possition " + position);
-		if (position < normalInterview.size()) {
-			return normalInterview.get(position);
-		} else if (position > normalInterview.size()) {
-			return normalInterview.get(position - normalInterview.size() - 1);
+		if ( position > 0 && position < (normalInterview.size() + 1)) {
+			return normalInterview.get(position - 1);
+		} else if (position > normalInterview.size() + 1) {
+			return groupInterview.get(position - normalInterview.size() - 2);
 		} else {
 			return null;
 		}
@@ -44,16 +44,17 @@ public class InterviewAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return normalInterview.size() + groupInterview.size() + (groupInterview.size() == 0 ? 0 : 1);
+		return normalInterview.size() + (normalInterview.size() == 0 ? 0 : 1) + groupInterview.size() + (groupInterview.size() == 0 ? 0 : 1);
 	}
 
 	@Override
 	public int getItemViewType(int position) {
-		if ( groupInterview.size() != 0 && position == normalInterview.size()){
+		if (position == 0 || position == (normalInterview.size() + 1)){
 			return HEADER_TYPE;
 		} else {
 			return INTERVIEW_TYPE;
 		}
+
 	}
 
 	@Override
@@ -92,6 +93,12 @@ public class InterviewAdapter extends BaseAdapter {
 			if (convertView == null){
 				v = LayoutInflater.from(context).inflate(R.layout.interview_header, null);
 			}
+			if (position == 0){
+				((TextView) v ).setText("Inperson Interviews");
+			} else if (position == normalInterview.size() + 1){
+				((TextView) v ).setText("Group Interviews");
+			}
+			
 		}
 
 		return v;
