@@ -22,7 +22,7 @@ import com.jobmine.models.Interview;
 public class InterviewAdapter extends BaseAdapter {
 	private static final int INTERVIEW_TYPE = 0;
 	private static final int HEADER_TYPE = 1;
-	List<Interview> interview = new ArrayList<Interview>();
+	List<Interview> normalInterview = new ArrayList<Interview>();
 	List<Interview> groupInterview = new ArrayList<Interview>();
 	Context context;
 
@@ -33,10 +33,10 @@ public class InterviewAdapter extends BaseAdapter {
 	@Override
 	public Interview getItem(int position) {
 		Logger.d("get possition " + position);
-		if (position < interview.size()) {
-			return interview.get(position);
-		} else if (position > interview.size()) {
-			return interview.get(position - interview.size() - 1);
+		if (position < normalInterview.size()) {
+			return normalInterview.get(position);
+		} else if (position > normalInterview.size()) {
+			return normalInterview.get(position - normalInterview.size() - 1);
 		} else {
 			return null;
 		}
@@ -44,12 +44,12 @@ public class InterviewAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return interview.size() + groupInterview.size() + (groupInterview.size() == 0 ? 0 : 1);
+		return normalInterview.size() + groupInterview.size() + (groupInterview.size() == 0 ? 0 : 1);
 	}
 
 	@Override
 	public int getItemViewType(int position) {
-		if ( groupInterview.size() != 0 && position == interview.size()){
+		if ( groupInterview.size() != 0 && position == normalInterview.size()){
 			return HEADER_TYPE;
 		} else {
 			return INTERVIEW_TYPE;
@@ -99,11 +99,13 @@ public class InterviewAdapter extends BaseAdapter {
 	}
 
 	public void setContent(List<Interview> interviews) {
+		groupInterview.clear();
+		normalInterview.clear();
 		for (Interview interview : interviews) {
 			if (interview.type.equals("Group")) {
 				groupInterview.add(interview);
 			} else {
-				this.interview.add(interview);
+				this.normalInterview.add(interview);
 			}
 		}
 		notifyDataSetChanged();
