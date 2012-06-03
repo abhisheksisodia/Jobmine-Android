@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Window;
 
+import com.jobmine.common.Common;
 import com.jobmine.common.Logger;
 import com.jobmine.service.JobmineInterface;
 import com.jobmine.service.JobmineService;
@@ -43,6 +46,14 @@ public class BindingActivity extends Activity {
 	
 	private void unbindFromJobmineService () {
 		unbindService(serviceConnection);
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if(!Common.isICS()){
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
 	}
 	
 	@Override

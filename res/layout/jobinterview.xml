@@ -2,15 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/paper"
-   >
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="#3E3E3E"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="Applications"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
     <ListView
         android:id="@+id/interview_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        
+        android:layout_height="match_parent"
+        android:cacheColorHint="#00000000"
+        android:divider="#646464"
+        android:dividerHeight="2dp" >
     </ListView>
 
 </LinearLayout>

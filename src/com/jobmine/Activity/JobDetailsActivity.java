@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.jobmine.R;
 import com.jobmine.common.Common;
 import com.jobmine.common.Constants;
-import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
 

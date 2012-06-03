@@ -1,4 +1,4 @@
-package com.jobmine.interview;
+package com.jobmine.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.jobmine.R;
-import com.jobmine.Activity.BindingActivity;
-import com.jobmine.Activity.MainActivity;
+import com.jobmine.adapters.InterviewAdapter;
 import com.jobmine.common.Common;
 import com.jobmine.models.Interview;
 import com.jobmine.providers.JobmineProvider;

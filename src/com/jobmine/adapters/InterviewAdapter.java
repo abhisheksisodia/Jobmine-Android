@@ -1,4 +1,4 @@
-package com.jobmine.interview;
+package com.jobmine.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,13 +97,16 @@ public class InterviewAdapter extends BaseAdapter {
 			type.setVisibility(View.GONE);
 			instructions.setVisibility(View.GONE);
 			
+			
+			View sideColour = v.findViewById(R.id.side_tab);
+			
 			long nowTime = System.currentTimeMillis() / 1000;
 			if (i.unixTime == -1) {
-				v.setBackgroundColor(Color.GRAY);
+				sideColour.setBackgroundColor(Color.GRAY);
 			} else if (nowTime - i.unixTime > 0) {
-				v.setBackgroundColor(0xFFF4BABA); //red
+				sideColour.setBackgroundColor(0xFFF4BABA); //red
 			} else {
-				v.setBackgroundColor(0xFFA3F57F); //green
+				sideColour.setBackgroundColor(0xFFA3F57F); //green
 			}
 			
 			v.setOnClickListener(new OnClickListener() {

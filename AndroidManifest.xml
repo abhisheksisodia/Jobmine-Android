@@ -28,7 +28,7 @@
         <activity android:name="com.jobmine.Activity.JobDetailsActivity" 
             	  android:screenOrientation="portrait"></activity>
         
-        <activity android:name="com.jobmine.interview.InterviewActivity" 
+        <activity android:name=".Activity.InterviewActivity" 
             	  android:screenOrientation="portrait"></activity>
         
         <service

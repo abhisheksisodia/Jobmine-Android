@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.widget.Toast;
 
 public class Common {
@@ -37,6 +38,10 @@ public class Common {
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		
 		return activeNetworkInfo != null;
+	}
+	
+	public static boolean isICS(){
+		 return  Build.VERSION.SDK_INT > 11;
 	}
 	
 }

@@ -14,7 +14,6 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -22,21 +21,17 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.jobmine.R;
+import com.jobmine.adapters.JobAdapter;
 import com.jobmine.common.Common;
 import com.jobmine.common.Constants;
 import com.jobmine.common.EncryptedSharedPreferences;
 import com.jobmine.common.JobmineNetworkRequest;
-import com.jobmine.interview.InterviewActivity;
 import com.jobmine.models.Job;
 import com.jobmine.providers.JobmineProvider;
 import com.jobmine.service.JobmineAlarmManager;
@@ -46,6 +41,7 @@ public class MainActivity extends BindingActivity {
 	ListView mListView;
 	boolean displayApplied, displaySelected, displayNotSelected, displayRanked;
 	List<Job> jobies;
+	JobAdapter jobAdapter;
 	SharedPreferences settings;
 	Editor editor;
 	int lastNetworkError = -1;
@@ -115,72 +111,18 @@ public class MainActivity extends BindingActivity {
 			} else {
 				if (param != null) {
 					jobies = param;
-					setContent(param);
+					jobAdapter.setContentFiltered(param, displayApplied, displaySelected, displayNotSelected, displayRanked);
 				} 
 			}
 		}
 
 	}
 
-	private void setContent(List<Job> jobies) {
-		LinearLayout list = (LinearLayout) findViewById(R.id.linearlayout1);
-		LayoutInflater li = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-		list.removeAllViews();
-		for (final Job job : jobies) {
-			if (!job.title.equals("")) {
-
-				View v = li.inflate(R.layout.jobentry, null);
-
-				TextView jobTitle = (TextView) v.findViewById(R.id.textView1);
-				TextView jobEmployer = (TextView) v.findViewById(R.id.textView5);
-				TextView jobStatusText = (TextView) v.findViewById(R.id.textView2);
-				TextView appStatusText = (TextView) v.findViewById(R.id.textView3);
-				TextView resumesText = (TextView) v.findViewById(R.id.textView4);
-
-				jobTitle.setText(job.title);
-				jobEmployer.setText(job.emplyer);
-				jobStatusText.setText(job.jobStatus);
-				appStatusText.setText(job.appStatus);
-				
-				//Set background colour based on job and app status
-				if (job.appStatus.contains("Not Selected") || job.jobStatus.contains("Cancelled")) {
-					v.setBackgroundColor(0xFFF4BABA); //red
-				} else if (job.appStatus.contains("Selected") || job.appStatus.contains("Scheduled")) {
-					v.setBackgroundColor(0xFFA3F57F); //green
-				} else if (job.appStatus.contains("Offer") || job.jobStatus.contains("Offer")) {
-					v.setBackgroundColor(0xFFDAA520); //amber
-				} if (job.jobStatus.contains("Ranking Completed")) {
-					v.setBackgroundColor(Color.GRAY); //gray
-				}  else {
-					
-				}
-				
-				resumesText.setText(job.resumes + " Applicants");
-				v.setOnTouchListener(new OnTouchListener() {
-
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
-						if (event.getAction() == MotionEvent.ACTION_UP) {
-							Intent intent = new Intent(MainActivity.this, JobDetailsActivity.class);
-							intent.putExtra(Constants.idKey, job.id);
-							startActivity(intent);
-						}
-						return true;
-					}
-				});
-
-				if ((displayApplied && job.appStatus.contains("Applied") || (displaySelected && job.appStatus.contains("Selected") && !job.appStatus.contains("Not"))
-						|| (displaySelected && job.appStatus.contains("Alternate")) || (displaySelected && job.appStatus.contains("Scheduled")) || (displayNotSelected
-						&& job.appStatus.contains("Not Selected") || (displayNotSelected && job.jobStatus.contains("Cancelled")) || (displayRanked && job.jobStatus.contains("Ranking Completed"))))) {
-					list.addView(v);
-				}
-			}
-		}
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.main);
 
 		// getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -192,6 +134,10 @@ public class MainActivity extends BindingActivity {
 		displaySelected = settings.getBoolean(Constants.selectedKey, true);
 		displayNotSelected = settings.getBoolean(Constants.notSelectedKey, true);
 		displayRanked = settings.getBoolean(Constants.rankedKey, true);
+		
+		jobAdapter = new JobAdapter(this);
+		
+		((ListView)findViewById(R.id.JobList)).setAdapter(jobAdapter);
 	}
 
 	private void createDialog() {
@@ -247,7 +193,7 @@ public class MainActivity extends BindingActivity {
 		super.onServiceConnected();
 		
 		if (jobies.size() > 0) {
-			setContent(jobies);
+			jobAdapter.setContentFiltered(jobies,displayApplied,displaySelected,displayNotSelected,displayRanked);
 		} else {
 			if (settings.contains(Constants.userNameKey) && settings.contains(Constants.pwdKey)) {
 				try {
@@ -302,7 +248,8 @@ public class MainActivity extends BindingActivity {
 					editor.putBoolean(Constants.notSelectedKey, displayNotSelected);
 					editor.putBoolean(Constants.rankedKey, displayRanked);
 					editor.commit();
-					setContent(jobies);
+					// TODO fix filter
+					jobAdapter.setContentFiltered(jobies, displayApplied, displaySelected, displayNotSelected, displayRanked);
 				}
 			});
 			builder.show();
@@ -312,8 +259,6 @@ public class MainActivity extends BindingActivity {
 			editor.remove(Constants.pwdKey);
 			editor.commit();
 			JobmineProvider.deleteAllApplications(getContentResolver());
-			LinearLayout linearLayout1 = (LinearLayout) findViewById(R.id.linearlayout1);
-			linearLayout1.removeAllViews();
 			createDialog();
 			break;
 		case R.id.interviews:
