@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
@@ -327,10 +328,13 @@ public class JobmineNetworkRequest {
 			if(!emplyNameList.isEmpty()){
 				for (int i = 0; i < emplyNameList.size(); i++) {
 					Interview in = new Interview();
+					SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy hh:mm a");
 					in.employerName = emplyNameList.get(i);
 					in.title = titleList.get(i);
 					in.date = dateList.get(i);
 					in.length = lengthList.get(i);
+					in.unixTime = df.parse(dateList.get(i) + " " + timeList.get(i));
+					Logger.d(in.unixTime.toString());
 					in.time = timeList.get(i);
 					in.interviewer = interviewerList.get(i);
 					in.id = idList.get(i);
@@ -349,12 +353,14 @@ public class JobmineNetworkRequest {
 			if(!gEmplyNameList.isEmpty()){
 				for (int i = 0; i < gEmplyNameList.size(); i++) {
 					Interview in = new Interview();
+					SimpleDateFormat dfull = new SimpleDateFormat("dd MMM yyyy hh:mm a");
 					SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
 					in.type = "Group";
 					in.employerName = gEmplyNameList.get(i);
 					in.title = gTitleList.get(i);
 					in.date = gDateList.get(i);
 					in.time = gStartTimeList.get(i);
+					in.unixTime = dfull.parse(gDateList.get(i) + " " + gStartTimeList);
 					in.length = ((Long) ((df.parse(gEndTimeList.get(i)).getTime() - df.parse(gStartTimeList.get(i)).getTime())/ (1000 * 60))).toString();
 
 					in.id = gIdList.get(i);

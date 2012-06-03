@@ -32,7 +32,6 @@ public class InterviewAdapter extends BaseAdapter {
 
 	@Override
 	public Interview getItem(int position) {
-		Logger.d("get possition " + position);
 		if ( position > 0 && position < (normalInterview.size() + 1)) {
 			return normalInterview.get(position - 1);
 		} else if (position > normalInterview.size() + 1) {
