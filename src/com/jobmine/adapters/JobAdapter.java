@@ -86,18 +86,6 @@ public class JobAdapter extends BaseAdapter {
 
 			}
 		});
-		//
-		// if ((displayApplied && job.appStatus.contains("Applied") ||
-		// (displaySelected && job.appStatus.contains("Selected") &&
-		// !job.appStatus.contains("Not"))
-		// || (displaySelected && job.appStatus.contains("Alternate")) ||
-		// (displaySelected && job.appStatus.contains("Scheduled")) ||
-		// (displayNotSelected
-		// && job.appStatus.contains("Not Selected") || (displayNotSelected &&
-		// job.jobStatus.contains("Cancelled")) || (displayRanked &&
-		// job.jobStatus.contains("Ranking Completed"))))) {
-		// list.addView(v);
-		// }
 
 		return v;
 	}
