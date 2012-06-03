@@ -1,8 +1,5 @@
 package com.jobmine.models;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -21,7 +18,7 @@ public class Interview implements Parcelable {
 	public String room = "";
 	public String type = "";
 	public String instructions = "";
-	public String status = "";
+	public int status = -1;
 	public long unixTime;
 
 	public Interview() {
@@ -39,7 +36,7 @@ public class Interview implements Parcelable {
 		room = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.ROOM));
 		type = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.TYPE));
 		instructions = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.INSTRUCTIONS));
-		status = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.JOB_STATUS));
+		status = c.getInt(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.JOB_STATUS));
 		unixTime = c.getLong(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.START_TIME_UNIX));
 	}
 	
@@ -58,7 +55,7 @@ public class Interview implements Parcelable {
 		dest.writeString(room);
 		dest.writeString(type);
 		dest.writeString(instructions);
-		dest.writeString(status);
+		dest.writeInt(status);
 		dest.writeLong(unixTime);
 	}
 
@@ -73,7 +70,7 @@ public class Interview implements Parcelable {
 		room = in.readString();
 		type = in.readString();
 		instructions = in.readString();
-		status = in.readString();
+		status = in.readInt();
 		unixTime = in.readLong();
 	}
 	

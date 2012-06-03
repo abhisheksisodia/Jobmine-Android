@@ -151,10 +151,10 @@ public class JobmineNetworkRequest {
 					tempJob.job = c.get(i).ownText();
 					
 				} else if (c.get(i).id().contains("UW_CO_JOBSTATVW_UW_CO_JOB_STATUS") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					tempJob.jobStatus = c.get(i).ownText();
+					tempJob.jobStatus = Common.getJobAppStatusCode(c.get(i).ownText());
 					
 				} else if (c.get(i).id().contains("UW_CO_APPSTATVW_UW_CO_APPL_STATUS") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
-					tempJob.appStatus = c.get(i).ownText();
+					tempJob.appStatus = Common.getJobAppStatusCode(c.get(i).ownText());
 					
 				} else if (c.get(i).id().contains("UW_CO_JOBAPP_CT_UW_CO_MAX_RESUMES") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
 					tempJob.resumes = c.get(i).ownText();
@@ -338,9 +338,9 @@ public class JobmineNetworkRequest {
 					in.type = typeList.get(i);
 					in.room = roomList.get(i);
 					in.instructions = instructionsList.get(i);
-					in.status = statusList.get(i);
+					in.status = Common.getJobAppStatusCode(statusList.get(i));
 					
-					if (!in.time.isEmpty() && !in.time.isEmpty()) {
+					if (!in.time.trim().isEmpty() && !in.time.trim().isEmpty()) {
 						SimpleDateFormat formatter = new SimpleDateFormat ("dd MMM yy hh:mm a");
 						Date date = formatter.parse(in.date + " " + in.time);
 
@@ -371,7 +371,7 @@ public class JobmineNetworkRequest {
 					in.room = gRoomList.get(i);
 					in.instructions = gInstructionsList.get(i);
 					
-					if (!in.time.isEmpty() && !in.time.isEmpty()) {
+					if (!in.time.trim().isEmpty() && !in.time.trim().isEmpty()) {
 						SimpleDateFormat formatter = new SimpleDateFormat ("dd MMM yy hh:mm a");
 						Date date = formatter.parse(in.date + " " + in.time);
 

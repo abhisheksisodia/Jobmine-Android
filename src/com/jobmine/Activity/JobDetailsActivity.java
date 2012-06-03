@@ -116,8 +116,8 @@ public class JobDetailsActivity extends BindingActivity {
 		
 		titleView.setText(currentJob.title);
 		employerView.setText(currentJob.emplyer);
-		jobStatusView.setText(currentJob.jobStatus);
-		appStatusView.setText(currentJob.appStatus);
+		jobStatusView.setText(Common.getJobAppStatusString(currentJob.jobStatus));
+		appStatusView.setText(Common.getJobAppStatusString(currentJob.appStatus));
 		resumeView.setText(currentJob.resumes+" Applicants");
 		
 		employerView.setOnClickListener(new OnClickListener() {

@@ -31,7 +31,7 @@ public class JobmineProvider extends ContentProvider {
 	private class DatabaseHelper extends SQLiteOpenHelper {
 
 		private static final String DATABASE_NAME = "Jobmine.db";
-		private static final int DATABASE_VERSION = 4;
+		private static final int DATABASE_VERSION = 5;
 		
 		private static final String APPLICATIONS_TABLE_NAME = "Applications";
 		private static final String INTERVIEWS_TABLE_NAME = "Interviews";
@@ -42,8 +42,8 @@ public class JobmineProvider extends ContentProvider {
 													+ JobmineProviderConstants.ApplicationsColumns.JOB_ID + " TEXT UNIQUE,"
 													+ JobmineProviderConstants.ApplicationsColumns.EMPLOYER + " TEXT,"
 													+ JobmineProviderConstants.ApplicationsColumns.JOB + " TEXT,"
-													+ JobmineProviderConstants.ApplicationsColumns.JOB_STATUS + " TEXT,"
-													+ JobmineProviderConstants.ApplicationsColumns.APP_STATUS + " TEXT,"
+													+ JobmineProviderConstants.ApplicationsColumns.JOB_STATUS + " INTEGER,"
+													+ JobmineProviderConstants.ApplicationsColumns.APP_STATUS + " INTEGER,"
 													+ JobmineProviderConstants.ApplicationsColumns.RESUMES + " TEXT,"
 													+ JobmineProviderConstants.ApplicationsColumns.JOB_DESCRIPTION + " TEXT"
 													+ ")";
@@ -60,7 +60,7 @@ public class JobmineProvider extends ContentProvider {
 				+ JobmineProviderConstants.InterviewsColumns.ROOM + " TEXT,"
 				+ JobmineProviderConstants.InterviewsColumns.INSTRUCTIONS + " TEXT,"
 				+ JobmineProviderConstants.InterviewsColumns.INTERVIEWER + " TEXT,"
-				+ JobmineProviderConstants.InterviewsColumns.JOB_STATUS + " TEXT,"
+				+ JobmineProviderConstants.InterviewsColumns.JOB_STATUS + " INTEGER,"
 				+ JobmineProviderConstants.InterviewsColumns.START_TIME_UNIX + " LONG"
 				+ ")";
 
@@ -250,6 +250,7 @@ public class JobmineProvider extends ContentProvider {
 			values.put(JobmineProviderConstants.ApplicationsColumns.JOB_STATUS, job.jobStatus);
 			values.put(JobmineProviderConstants.ApplicationsColumns.APP_STATUS, job.appStatus);
 			values.put(JobmineProviderConstants.ApplicationsColumns.RESUMES, job.resumes);
+			//We do not update job description, or else it may overwrite it to be blank
 			
 			return resolver.update(JobmineProviderConstants.APPLICATIONS_CONTENT_URI, values, JobmineProviderConstants.ApplicationsColumns.JOB_ID + " = ?", new String [] { job.id });
 		}

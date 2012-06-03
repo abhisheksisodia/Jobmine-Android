@@ -4,21 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jobmine.R;
-import com.jobmine.common.Logger;
 import com.jobmine.models.Interview;
 
 public class InterviewAdapter extends BaseAdapter {
@@ -118,7 +112,10 @@ public class InterviewAdapter extends BaseAdapter {
 					
 					if (type.getVisibility() == View.GONE) {
 						type.setVisibility(View.VISIBLE);
-						instructions.setVisibility(View.VISIBLE);
+
+						if (instructions.getText().toString().trim().length() > 3) {
+							instructions.setVisibility(View.VISIBLE);
+						}
 					} else {
 						type.setVisibility(View.GONE);
 						instructions.setVisibility(View.GONE);

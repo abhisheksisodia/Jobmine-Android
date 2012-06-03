@@ -255,10 +255,7 @@ public class MainActivity extends BindingActivity {
 			builder.show();
 			break;
 		case R.id.logout:
-			editor.remove(Constants.userNameKey);
-			editor.remove(Constants.pwdKey);
-			editor.commit();
-			JobmineProvider.deleteAllApplications(getContentResolver());
+			Common.clearAllData(MainActivity.this);
 			createDialog();
 			break;
 		case R.id.interviews:

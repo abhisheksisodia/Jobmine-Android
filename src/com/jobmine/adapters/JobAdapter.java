@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.jobmine.R;
 import com.jobmine.Activity.JobDetailsActivity;
+import com.jobmine.common.Common;
 import com.jobmine.common.Constants;
 import com.jobmine.models.Job;
 
@@ -59,20 +60,20 @@ public class JobAdapter extends BaseAdapter {
 
 		jobTitle.setText(job.title);
 		jobEmployer.setText(job.emplyer);
-		jobStatusText.setText(job.jobStatus);
-		appStatusText.setText(job.appStatus);
+		jobStatusText.setText(Common.getJobAppStatusString(job.jobStatus));
+		appStatusText.setText(Common.getJobAppStatusString(job.appStatus));
 
 		// Set background colour based on job and app status
-		if (job.appStatus.contains("Not Selected") || job.jobStatus.contains("Cancelled")) {
+		if (job.appStatus == Constants.STATUS_NOT_SELECTED || job.jobStatus == Constants.STATUS_CANCELLED) {
 			sideColour.setBackgroundColor(0xFFF4BABA); // red
-		} else if (job.appStatus.contains("Selected") || job.appStatus.contains("Scheduled")) {
+		} else if (job.appStatus == Constants.STATUS_SELECTED || job.appStatus == Constants.STATUS_SCHEDULED) {
 			sideColour.setBackgroundColor(0xFFA3F57F); // green
-		} else if (job.appStatus.contains("Offer") || job.jobStatus.contains("Offer")) {
+		} else if (job.appStatus == Constants.STATUS_OFFER || job.jobStatus == Constants.STATUS_OFFER) {
 			sideColour.setBackgroundColor(0xFFDAA520); // amber
-		} else if (job.jobStatus.contains("Ranking Completed") || job.jobStatus.contains("Filled")) {
+		} else if (job.jobStatus == Constants.STATUS_RANKING_COMPLETED || job.jobStatus == Constants.STATUS_FILLED) {
 			sideColour.setBackgroundColor(Color.GRAY); // gray
 		} else {
-			sideColour.setBackgroundColor(Color.TRANSPARENT); // gray
+			sideColour.setBackgroundColor(Color.TRANSPARENT); // nothing
 		}
 
 		resumesText.setText(job.resumes + " Applicants");
@@ -110,14 +111,14 @@ public class JobAdapter extends BaseAdapter {
 	public void setContentFiltered(List<Job> list, boolean applied, boolean selected, boolean notSelected, boolean ranking) {
 		jobies.clear();
 		for (Job job : list) {
-			String status = job.appStatus;
-			if (applied && status.contains("Applied")) {
+			int status = job.appStatus;
+			if (applied && status == Constants.STATUS_APPLIED) {
 				jobies.add(job);
-			} else if (selected && (status.contains("Selected") || status.contains("Scheduled"))) {
+			} else if (selected && (status == Constants.STATUS_SELECTED || status == Constants.STATUS_SCHEDULED)) {
 				jobies.add(job);
-			} else if (notSelected && status.contains("Not Selected")) {
+			} else if (notSelected && status == Constants.STATUS_NOT_SELECTED) {
 				jobies.add(job);
-			} else if (ranking && job.jobStatus.contains("Ranking Completed")) {
+			} else if (ranking && job.jobStatus == Constants.STATUS_RANKING_COMPLETED) {
 				jobies.add(job);
 			}
 		}

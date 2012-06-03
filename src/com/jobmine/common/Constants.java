@@ -16,6 +16,23 @@ public class Constants {
 	public static final String appStatusKey = "appstatuskey";
 	public static final String resumeKey = "resumekey";
 	
+	//Job and applications statuses
+	public static final int STATUS_UNKNOWN = -1;
+	public static final int STATUS_POSTED = 0;
+	public static final int STATUS_APPLIED = 1;
+	public static final int STATUS_APPLICATIONS_AVAILABLE = 2;
+	public static final int STATUS_SCREENED = 3;
+	public static final int STATUS_NOT_SELECTED = 4;
+	public static final int STATUS_SELECTED = 5;
+	public static final int STATUS_SCHEDULED = 6;
+	public static final int STATUS_ALTERNATE = 7;
+	public static final int STATUS_RANKING_COMPLETED = 8;
+	public static final int STATUS_APPROVED = 9;
+	public static final int STATUS_COMPLETE = 10;
+	public static final int STATUS_OFFER = 11;
+	public static final int STATUS_CANCELLED = 12;
+	public static final int STATUS_FILLED = 13;
+	
 	//Time interval for checking for new interviews
 	public static final int SERVICE_UPDATE_TIME_INTERVAL_SECONDS = 60*30;
 	
