@@ -1,10 +1,13 @@
 package com.jobmine.models;
 
-import com.jobmine.providers.JobmineProviderConstants;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.jobmine.providers.JobmineProviderConstants;
 
 public class Interview implements Parcelable {
 	
@@ -19,8 +22,8 @@ public class Interview implements Parcelable {
 	public String type = "";
 	public String instructions = "";
 	public String status = "";
-	public long unixTime = 0;
-	
+	public long unixTime;
+
 	public Interview() {
 
 	}

@@ -14,6 +14,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -140,18 +141,20 @@ public class MainActivity extends BindingActivity {
 				jobEmployer.setText(job.emplyer);
 				jobStatusText.setText(job.jobStatus);
 				appStatusText.setText(job.appStatus);
-				if (job.appStatus.contains("Not Selected")) {
-					appStatusText.setBackgroundResource(R.color.red);
+				
+				//Set background colour based on job and app status
+				if (job.appStatus.contains("Not Selected") || job.jobStatus.contains("Cancelled")) {
+					v.setBackgroundColor(0xFFF4BABA); //red
 				} else if (job.appStatus.contains("Selected") || job.appStatus.contains("Scheduled")) {
-					appStatusText.setBackgroundResource(R.color.green);
-				} else if (job.appStatus.contains("Alternate")) {
-					appStatusText.setBackgroundColor(R.color.amber);
+					v.setBackgroundColor(0xFFA3F57F); //green
+				} else if (job.appStatus.contains("Offer") || job.jobStatus.contains("Offer")) {
+					v.setBackgroundColor(0xFFDAA520); //amber
+				} if (job.jobStatus.contains("Ranking Completed")) {
+					v.setBackgroundColor(Color.GRAY); //gray
+				}  else {
+					
 				}
-				if (job.jobStatus.contains("Cancelled")) {
-					jobStatusText.setBackgroundColor(R.color.red);
-				} else if (job.jobStatus.contains("Ranking Completed") || job.jobStatus.contains("Offer")) {
-					jobStatusText.setBackgroundColor(R.color.green);
-				}
+				
 				resumesText.setText(job.resumes + " Applicants");
 				v.setOnTouchListener(new OnTouchListener() {
 

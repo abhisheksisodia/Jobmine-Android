@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
@@ -33,7 +34,6 @@ public class InterviewAdapter extends BaseAdapter {
 
 	@Override
 	public Interview getItem(int position) {
-		Logger.d("get possition " + position);
 		if ( position > 0 && position < (normalInterview.size() + 1)) {
 			return normalInterview.get(position - 1);
 		} else if (position > normalInterview.size() + 1) {
@@ -96,6 +96,15 @@ public class InterviewAdapter extends BaseAdapter {
 			
 			type.setVisibility(View.GONE);
 			instructions.setVisibility(View.GONE);
+			
+			long nowTime = System.currentTimeMillis() / 1000;
+			if (i.unixTime == -1) {
+				v.setBackgroundColor(Color.GRAY);
+			} else if (nowTime - i.unixTime > 0) {
+				v.setBackgroundColor(0xFFF4BABA); //red
+			} else {
+				v.setBackgroundColor(0xFFA3F57F); //green
+			}
 			
 			v.setOnClickListener(new OnClickListener() {
 				

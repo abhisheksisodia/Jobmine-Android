@@ -38,9 +38,11 @@ public class InterviewActivity extends BindingActivity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
