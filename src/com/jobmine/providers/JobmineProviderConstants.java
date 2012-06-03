@@ -45,6 +45,7 @@ public class JobmineProviderConstants {
 		public static final String INSTRUCTIONS = "instructions";
 		public static final String INTERVIEWER = "interviewer";
 		public static final String JOB_STATUS = "job_status";
+		public static final String START_TIME_UNIX = "start_time_unix";
 	}
 	
 	public static final String [] APPLICATIONS_DEFAULT_PROJECTION = new String [] {
@@ -71,7 +72,8 @@ public class JobmineProviderConstants {
 		InterviewsColumns.ROOM,
 		InterviewsColumns.INSTRUCTIONS,
 		InterviewsColumns.INTERVIEWER,
-		InterviewsColumns.JOB_STATUS
+		InterviewsColumns.JOB_STATUS,
+		InterviewsColumns.START_TIME_UNIX
 	};
 
 }

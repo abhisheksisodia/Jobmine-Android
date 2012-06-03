@@ -19,7 +19,8 @@ public class Interview implements Parcelable {
 	public String type = "";
 	public String instructions = "";
 	public String status = "";
-			
+	public long unixTime = 0;
+	
 	public Interview() {
 
 	}
@@ -36,6 +37,7 @@ public class Interview implements Parcelable {
 		type = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.TYPE));
 		instructions = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.INSTRUCTIONS));
 		status = c.getString(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.JOB_STATUS));
+		unixTime = c.getLong(c.getColumnIndex(JobmineProviderConstants.InterviewsColumns.START_TIME_UNIX));
 	}
 	
 	public Interview(Parcel in) {
@@ -54,6 +56,7 @@ public class Interview implements Parcelable {
 		dest.writeString(type);
 		dest.writeString(instructions);
 		dest.writeString(status);
+		dest.writeLong(unixTime);
 	}
 
 	public void readFromParcel(Parcel in) {
@@ -68,6 +71,7 @@ public class Interview implements Parcelable {
 		type = in.readString();
 		instructions = in.readString();
 		status = in.readString();
+		unixTime = in.readLong();
 	}
 	
 	public static final Parcelable.Creator<Interview> CREATOR = new Parcelable.Creator<Interview>() {

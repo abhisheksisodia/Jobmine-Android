@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
@@ -338,6 +339,15 @@ public class JobmineNetworkRequest {
 					in.room = roomList.get(i);
 					in.instructions = instructionsList.get(i);
 					in.status = statusList.get(i);
+					
+					if (!in.time.isEmpty() && !in.time.isEmpty()) {
+						SimpleDateFormat formatter = new SimpleDateFormat ("dd MMM yy hh:mm a");
+						Date date = formatter.parse(in.date + " " + in.time);
+
+						in.unixTime = date.getTime() / 1000;
+					} else {
+						in.unixTime = -1;
+					}
 
 					if (!in.id.trim().isEmpty()) {
 						interviews.add(in);
@@ -346,7 +356,7 @@ public class JobmineNetworkRequest {
 				}
 			}
 
-			if(!gEmplyNameList.isEmpty()){
+			if(!gEmplyNameList.isEmpty()) {
 				for (int i = 0; i < gEmplyNameList.size(); i++) {
 					Interview in = new Interview();
 					SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
@@ -360,6 +370,15 @@ public class JobmineNetworkRequest {
 					in.id = gIdList.get(i);
 					in.room = gRoomList.get(i);
 					in.instructions = gInstructionsList.get(i);
+					
+					if (!in.time.isEmpty() && !in.time.isEmpty()) {
+						SimpleDateFormat formatter = new SimpleDateFormat ("dd MMM yy hh:mm a");
+						Date date = formatter.parse(in.date + " " + in.time);
+
+						in.unixTime = date.getTime() / 1000;
+					} else {
+						in.unixTime = -1;
+					}
 
 					if (!in.id.trim().isEmpty()) {
 						interviews.add(in);

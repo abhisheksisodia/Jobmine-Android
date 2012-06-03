@@ -10,6 +10,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
@@ -81,20 +82,44 @@ public class InterviewAdapter extends BaseAdapter {
 			TextView date = (TextView) v.findViewById(R.id.interview_date);
 			TextView length = (TextView) v.findViewById(R.id.interview_length);
 			TextView room = (TextView) v.findViewById(R.id.interview_room);
-
+			TextView type = (TextView) v.findViewById(R.id.interview_type);
+			TextView instructions = (TextView) v.findViewById(R.id.interview_instructions);
+			
 			title.setText(i.title);
 			time.setText(i.time);
 			date.setText(i.date);
 			room.setText(i.room);
 			length.setText(i.length + " Minutes");
-
+			type.setText(i.type);
+			instructions.setText(i.instructions);
 			employer.setText(i.employerName);
+			
+			type.setVisibility(View.GONE);
+			instructions.setVisibility(View.GONE);
+			
+			v.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View clicked) {
+					TextView type = (TextView) clicked.findViewById(R.id.interview_type);
+					TextView instructions = (TextView) clicked.findViewById(R.id.interview_instructions);
+					
+					if (type.getVisibility() == View.GONE) {
+						type.setVisibility(View.VISIBLE);
+						instructions.setVisibility(View.VISIBLE);
+					} else {
+						type.setVisibility(View.GONE);
+						instructions.setVisibility(View.GONE);
+					}
+				}
+			});
+			
 		} else {
 			if (convertView == null){
 				v = LayoutInflater.from(context).inflate(R.layout.interview_header, null);
 			}
 			if (position == 0){
-				((TextView) v ).setText("Inperson Interviews");
+				((TextView) v ).setText("In Person Interviews");
 			} else if (position == normalInterview.size() + 1){
 				((TextView) v ).setText("Group Interviews");
 			}

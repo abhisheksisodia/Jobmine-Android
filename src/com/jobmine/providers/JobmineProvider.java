@@ -31,7 +31,7 @@ public class JobmineProvider extends ContentProvider {
 	private class DatabaseHelper extends SQLiteOpenHelper {
 
 		private static final String DATABASE_NAME = "Jobmine.db";
-		private static final int DATABASE_VERSION = 3;
+		private static final int DATABASE_VERSION = 4;
 		
 		private static final String APPLICATIONS_TABLE_NAME = "Applications";
 		private static final String INTERVIEWS_TABLE_NAME = "Interviews";
@@ -60,7 +60,8 @@ public class JobmineProvider extends ContentProvider {
 				+ JobmineProviderConstants.InterviewsColumns.ROOM + " TEXT,"
 				+ JobmineProviderConstants.InterviewsColumns.INSTRUCTIONS + " TEXT,"
 				+ JobmineProviderConstants.InterviewsColumns.INTERVIEWER + " TEXT,"
-				+ JobmineProviderConstants.InterviewsColumns.JOB_STATUS + " TEXT"
+				+ JobmineProviderConstants.InterviewsColumns.JOB_STATUS + " TEXT,"
+				+ JobmineProviderConstants.InterviewsColumns.START_TIME_UNIX + " LONG"
 				+ ")";
 
 		public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
@@ -368,6 +369,7 @@ public class JobmineProvider extends ContentProvider {
 			values.put(JobmineProviderConstants.InterviewsColumns.INSTRUCTIONS, interview.instructions);
 			values.put(JobmineProviderConstants.InterviewsColumns.INTERVIEWER, interview.interviewer);
 			values.put(JobmineProviderConstants.InterviewsColumns.JOB_STATUS, interview.status);
+			values.put(JobmineProviderConstants.InterviewsColumns.START_TIME_UNIX, interview.unixTime);
 			
 			resolver.insert(JobmineProviderConstants.INTERVIEWS_CONTENT_URI, values);
 		}
