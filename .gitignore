@@ -2,3 +2,4 @@ bin/*
 *.class
 *.apk
 *.dex
+gen/

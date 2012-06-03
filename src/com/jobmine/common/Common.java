@@ -59,7 +59,7 @@ public class Common {
 			return Constants.STATUS_APPLICATIONS_AVAILABLE;
 		} else if (status.equals("Screened")) {
 			return Constants.STATUS_SCREENED;
-		} else if (status.equals("Not Selected ")) {
+		} else if (status.equals("Not Selected")) {
 			return Constants.STATUS_NOT_SELECTED;
 		} else if (status.equals("Selected")) {
 			return Constants.STATUS_SELECTED;
