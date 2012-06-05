@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.jobmine.common.Common;
 import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.common.Logger;
 import com.jobmine.models.Interview;
@@ -55,7 +56,7 @@ public class JobmineService extends Service {
 			Job j = JobmineProvider.getApplication(jobId, getContentResolver());
 			String description = j.description;
 			
-			if (description.trim().isEmpty()) {
+			if (Common.trim(description).isEmpty()) {
 				//Make network request
 				description = JobmineNetworkRequest.getJobDescription(JobmineService.this, jobId);
 	

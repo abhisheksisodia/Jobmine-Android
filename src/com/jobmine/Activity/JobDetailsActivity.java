@@ -88,7 +88,7 @@ public class JobDetailsActivity extends BindingActivity {
 		//Get job id from extra info
 		String jobId = getIntent().getStringExtra(Constants.idKey);
 		
-		if (!jobId.trim().isEmpty()) {
+		if (!Common.trim(jobId).isEmpty()) {
 			//Get the job info from provider
 			Job currentJob = JobmineProvider.getApplication(jobId, getContentResolver());
 			

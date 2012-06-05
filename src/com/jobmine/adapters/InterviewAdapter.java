@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.jobmine.R;
+import com.jobmine.common.Common;
 import com.jobmine.models.Interview;
 
 public class InterviewAdapter extends BaseAdapter {
@@ -80,7 +81,7 @@ public class InterviewAdapter extends BaseAdapter {
 			TextView instructions = (TextView) v.findViewById(R.id.interview_instructions);
 			
 			title.setText(i.title);
-			time.setText(i.time);
+			time.setText(Common.trim(i.time).isEmpty() ? "??:??" : i.time);
 			date.setText(i.date);
 			room.setText(i.room);
 			length.setText(i.length + " Minutes");

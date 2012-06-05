@@ -339,8 +339,8 @@ public class JobmineNetworkRequest {
 					in.room = roomList.get(i);
 					in.instructions = instructionsList.get(i);
 					in.status = Common.getJobAppStatusCode(statusList.get(i));
-					
-					if (!in.time.trim().isEmpty() && !in.time.trim().isEmpty()) {
+		
+					if (!Common.trim(in.time).isEmpty() && !Common.trim(in.date).isEmpty()) {
 						SimpleDateFormat formatter = new SimpleDateFormat ("dd MMM yy hh:mm a");
 						Date date = formatter.parse(in.date + " " + in.time);
 
@@ -349,7 +349,7 @@ public class JobmineNetworkRequest {
 						in.unixTime = -1;
 					}
 
-					if (!in.id.trim().isEmpty()) {
+					if (!Common.trim(in.id).isEmpty()) {
 						interviews.add(in);
 					}
 
@@ -371,7 +371,7 @@ public class JobmineNetworkRequest {
 					in.room = gRoomList.get(i);
 					in.instructions = gInstructionsList.get(i);
 					
-					if (!in.time.trim().isEmpty() && !in.time.trim().isEmpty()) {
+					if (!Common.trim(in.time).isEmpty() && !Common.trim(in.date).isEmpty()) {
 						SimpleDateFormat formatter = new SimpleDateFormat ("dd MMM yy hh:mm a");
 						Date date = formatter.parse(in.date + " " + in.time);
 
@@ -379,8 +379,8 @@ public class JobmineNetworkRequest {
 					} else {
 						in.unixTime = -1;
 					}
-
-					if (!in.id.trim().isEmpty()) {
+					
+					if (!Common.trim(in.id).isEmpty()) {
 						interviews.add(in);
 					}
 

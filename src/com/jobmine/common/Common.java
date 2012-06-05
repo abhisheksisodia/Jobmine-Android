@@ -49,7 +49,7 @@ public class Common {
 	
 	public static int getJobAppStatusCode (String status) {
 		
-		if (status.trim().isEmpty()) {
+		if (Common.trim(status).isEmpty()) {
 			return Constants.STATUS_UNKNOWN;
 		} else if (status.equals("Posted")) {
 			return Constants.STATUS_POSTED;
@@ -137,5 +137,9 @@ public class Common {
 		
 		JobmineProvider.deleteAllApplications(context.getContentResolver());
 		JobmineProvider.deleteAllInterviews(context.getContentResolver());
+	}
+	
+	public static String trim (String s) {
+		return s.replaceAll("\240", "").trim();
 	}
 }
