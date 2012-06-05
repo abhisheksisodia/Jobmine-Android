@@ -43,39 +43,43 @@ public class JobAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
+		ViewHolder holder = null;
 		View v = convertView;
 		if (v == null) {
 			v = LayoutInflater.from(context).inflate(R.layout.jobentry, null);
+			holder = new ViewHolder();
+			holder.jobTitle = (TextView) v.findViewById(R.id.textView1);
+			holder.jobEmployer = (TextView) v.findViewById(R.id.textView5);
+			holder.jobStatusText = (TextView) v.findViewById(R.id.textView2);
+			holder.appStatusText = (TextView) v.findViewById(R.id.textView3);
+			holder.resumesText = (TextView) v.findViewById(R.id.textView4);
+			holder.sideColour = v.findViewById(R.id.side_tab);
+			v.setTag(holder);
+
+		} else {
+			holder = (ViewHolder) v.getTag();
 		}
 		final Job job = jobies.get(position);
 
-		TextView jobTitle = (TextView) v.findViewById(R.id.textView1);
-		TextView jobEmployer = (TextView) v.findViewById(R.id.textView5);
-		TextView jobStatusText = (TextView) v.findViewById(R.id.textView2);
-		TextView appStatusText = (TextView) v.findViewById(R.id.textView3);
-		TextView resumesText = (TextView) v.findViewById(R.id.textView4);
-		View sideColour = v.findViewById(R.id.side_tab);
-
-		jobTitle.setText(job.title);
-		jobEmployer.setText(job.emplyer);
-		jobStatusText.setText(job.jobStatus);
-		appStatusText.setText(job.appStatus);
+		holder.jobTitle.setText(job.title);
+		holder.jobEmployer.setText(job.emplyer);
+		holder.jobStatusText.setText(job.jobStatus);
+		holder.appStatusText.setText(job.appStatus);
 
 		// Set background colour based on job and app status
 		if (job.appStatus.contains("Not Selected") || job.jobStatus.contains("Cancelled")) {
-			sideColour.setBackgroundColor(0xFFF4BABA); // red
+			holder.sideColour.setBackgroundColor(0xFFF4BABA); // red
 		} else if (job.appStatus.contains("Selected") || job.appStatus.contains("Scheduled")) {
-			sideColour.setBackgroundColor(0xFFA3F57F); // green
+			holder.sideColour.setBackgroundColor(0xFFA3F57F); // green
 		} else if (job.appStatus.contains("Offer") || job.jobStatus.contains("Offer")) {
-			sideColour.setBackgroundColor(0xFFDAA520); // amber
+			holder.sideColour.setBackgroundColor(0xFFDAA520); // amber
 		} else if (job.jobStatus.contains("Ranking Completed") || job.jobStatus.contains("Filled")) {
-			sideColour.setBackgroundColor(Color.GRAY); // gray
+			holder.sideColour.setBackgroundColor(Color.GRAY); // gray
 		} else {
-			sideColour.setBackgroundColor(Color.TRANSPARENT); // gray
+			holder.sideColour.setBackgroundColor(Color.TRANSPARENT); // gray
 		}
 
-		resumesText.setText(job.resumes + " Applicants");
+		holder.resumesText.setText(job.resumes + " Applicants");
 		v.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -90,10 +94,10 @@ public class JobAdapter extends BaseAdapter {
 		return v;
 	}
 
-//	public void setContent(List<Job> list) {
-//		jobies = new ArrayList<Job>(list);
-//		notifyDataSetChanged();
-//	}
+	// public void setContent(List<Job> list) {
+	// jobies = new ArrayList<Job>(list);
+	// notifyDataSetChanged();
+	// }
 
 	public void setContentFiltered(List<Job> list, boolean applied, boolean selected, boolean notSelected, boolean ranking) {
 		jobies.clear();
@@ -101,14 +105,23 @@ public class JobAdapter extends BaseAdapter {
 			String status = job.appStatus;
 			if (applied && status.contains("Applied")) {
 				jobies.add(job);
-			} else if (selected && (status.contains("Selected") || status.contains("Scheduled"))) {
-				jobies.add(job);
 			} else if (notSelected && status.contains("Not Selected")) {
 				jobies.add(job);
 			} else if (ranking && job.jobStatus.contains("Ranking Completed")) {
 				jobies.add(job);
+			} else if (selected && (status.contains("Selected") || status.contains("Scheduled"))) {
+				jobies.add(job);
 			}
 		}
 		notifyDataSetChanged();
+	}
+
+	private class ViewHolder {
+		TextView jobTitle;
+		TextView jobEmployer;
+		TextView jobStatusText;
+		TextView appStatusText;
+		TextView resumesText;
+		View sideColour;
 	}
 }
