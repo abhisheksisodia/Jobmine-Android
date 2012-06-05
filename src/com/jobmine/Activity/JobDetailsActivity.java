@@ -4,7 +4,7 @@ import java.net.URLEncoder;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -37,11 +37,13 @@ public class JobDetailsActivity extends BindingActivity {
 		@Override
 		protected void onPreExecute() {
 			dialog = new ProgressDialog(JobDetailsActivity.this);
-			dialog = ProgressDialog.show(JobDetailsActivity.this, "", "Loading...", true, false);
-			dialog.setOnDismissListener(new OnDismissListener() {
+			dialog = ProgressDialog.show(JobDetailsActivity.this, "", "Loading...", true, true);
+			dialog.setOnCancelListener(new OnCancelListener() {
+				
 				@Override
-				public void onDismiss(DialogInterface dialog) {
-					dialog.cancel();
+				public void onCancel(DialogInterface dialog) {
+					GetJobDescriptionTask.this.cancel(true);
+					JobDetailsActivity.this.finish();
 				}
 			});
 			dialog.show();

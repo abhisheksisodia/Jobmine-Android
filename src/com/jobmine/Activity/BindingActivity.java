@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.Window;
 
@@ -21,6 +22,8 @@ import com.jobmine.service.JobmineService;
  *
  */
 public class BindingActivity extends Activity {
+	
+	private Handler handler;
 
 	private JobmineInterface serviceInterface = null;
 
@@ -51,6 +54,7 @@ public class BindingActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		handler = new Handler();
 		if(!Common.isICS()){
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 		}
@@ -74,6 +78,10 @@ public class BindingActivity extends Activity {
 	
 	public JobmineInterface getServiceinterface () {
 		return serviceInterface;
+	}
+	
+	public void delayedRunOnUIThread(Runnable r,long delay){
+		handler.postDelayed(r, delay);
 	}
 	
 	

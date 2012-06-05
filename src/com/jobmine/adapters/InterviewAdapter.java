@@ -3,17 +3,19 @@ package com.jobmine.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jobmine.R;
+import com.jobmine.Activity.BindingActivity;
 import com.jobmine.common.Common;
+import com.jobmine.common.Logger;
 import com.jobmine.models.Interview;
 
 public class InterviewAdapter extends BaseAdapter {
@@ -21,15 +23,15 @@ public class InterviewAdapter extends BaseAdapter {
 	private static final int HEADER_TYPE = 1;
 	List<Interview> normalInterview = new ArrayList<Interview>();
 	List<Interview> groupInterview = new ArrayList<Interview>();
-	Context context;
+	BindingActivity context;
 
-	public InterviewAdapter(Context context) {
+	public InterviewAdapter(BindingActivity context) {
 		this.context = context;
 	}
 
 	@Override
 	public Interview getItem(int position) {
-		if ( position > 0 && position < (normalInterview.size() + 1)) {
+		if (position > 0 && position < (normalInterview.size() + 1)) {
 			return normalInterview.get(position - 1);
 		} else if (position > normalInterview.size() + 1) {
 			return groupInterview.get(position - normalInterview.size() - 2);
@@ -45,7 +47,7 @@ public class InterviewAdapter extends BaseAdapter {
 
 	@Override
 	public int getItemViewType(int position) {
-		if (position == 0 || position == (normalInterview.size() + 1)){
+		if (position == 0 || position == (normalInterview.size() + 1)) {
 			return HEADER_TYPE;
 		} else {
 			return INTERVIEW_TYPE;
@@ -64,7 +66,7 @@ public class InterviewAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, final ViewGroup parent) {
 		View v = convertView;
 		if (getItemViewType(position) == INTERVIEW_TYPE) {
 			Interview i = getItem(position);
@@ -79,7 +81,7 @@ public class InterviewAdapter extends BaseAdapter {
 			TextView room = (TextView) v.findViewById(R.id.interview_room);
 			TextView type = (TextView) v.findViewById(R.id.interview_type);
 			TextView instructions = (TextView) v.findViewById(R.id.interview_instructions);
-			
+
 			title.setText(i.title);
 			time.setText(Common.trim(i.time).isEmpty() ? "??:??" : i.time);
 			date.setText(i.date);
@@ -88,29 +90,40 @@ public class InterviewAdapter extends BaseAdapter {
 			type.setText(i.type);
 			instructions.setText(i.instructions);
 			employer.setText(i.employerName);
-			
+
 			type.setVisibility(View.GONE);
 			instructions.setVisibility(View.GONE);
-			
-			
+
 			View sideColour = v.findViewById(R.id.side_tab);
-			
+
 			long nowTime = System.currentTimeMillis() / 1000;
 			if (i.unixTime == -1) {
 				sideColour.setBackgroundColor(Color.GRAY);
 			} else if (nowTime - i.unixTime > 0) {
-				sideColour.setBackgroundColor(0xFFF4BABA); //red
+				sideColour.setBackgroundColor(0xFFF4BABA); // red
 			} else {
-				sideColour.setBackgroundColor(0xFFA3F57F); //green
+				sideColour.setBackgroundColor(0xFFA3F57F); // green
 			}
-			
+
 			v.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
-				public void onClick(View clicked) {
+				public void onClick(final View clicked) {
 					TextView type = (TextView) clicked.findViewById(R.id.interview_type);
 					TextView instructions = (TextView) clicked.findViewById(R.id.interview_instructions);
-					
+					final ListView p = (ListView) parent;
+
+					Logger.d("last " + p.getLastVisiblePosition() + "pos " + position);
+
+					context.delayedRunOnUIThread(new Runnable() {
+
+						@Override
+						public void run() {
+							if (p.getLastVisiblePosition() == position) {
+								p.smoothScrollToPosition(position);
+							}
+						}
+					}, 10);
 					if (type.getVisibility() == View.GONE) {
 						type.setVisibility(View.VISIBLE);
 
@@ -123,17 +136,17 @@ public class InterviewAdapter extends BaseAdapter {
 					}
 				}
 			});
-			
+
 		} else {
-			if (convertView == null){
+			if (convertView == null) {
 				v = LayoutInflater.from(context).inflate(R.layout.interview_header, null);
 			}
-			if (position == 0){
-				((TextView) v ).setText("In Person Interviews");
-			} else if (position == normalInterview.size() + 1){
-				((TextView) v ).setText("Group Interviews");
+			if (position == 0) {
+				((TextView) v).setText("In Person Interviews");
+			} else if (position == normalInterview.size() + 1) {
+				((TextView) v).setText("Group Interviews");
 			}
-			
+
 		}
 
 		return v;

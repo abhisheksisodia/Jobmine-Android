@@ -248,7 +248,6 @@ public class MainActivity extends BindingActivity {
 					editor.putBoolean(Constants.notSelectedKey, displayNotSelected);
 					editor.putBoolean(Constants.rankedKey, displayRanked);
 					editor.commit();
-					// TODO fix filter
 					jobAdapter.setContentFiltered(jobies, displayApplied, displaySelected, displayNotSelected, displayRanked);
 				}
 			});

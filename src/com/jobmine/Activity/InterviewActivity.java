@@ -5,7 +5,7 @@ import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,7 +30,7 @@ public class InterviewActivity extends BindingActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.jobinterview);
-		adapter = new InterviewAdapter(getApplicationContext());
+		adapter = new InterviewAdapter(this);
 		ListView lv = (ListView) this.findViewById(R.id.interview_list);
 		lv.setAdapter(adapter);
 	}
@@ -48,7 +48,7 @@ public class InterviewActivity extends BindingActivity {
 	protected void onServiceConnected() {
 		super.onServiceConnected();
 
-		getTask(false).execute();
+		new InterviewTask().execute(false);
 	}
 	
 	@Override
@@ -59,31 +59,32 @@ public class InterviewActivity extends BindingActivity {
 	}
 	
 	
-	private AsyncTask<Void, Void, List<Interview>> getTask(final boolean isForced){
-		return new AsyncTask<Void, Void, List<Interview>>() {
+	private class InterviewTask extends AsyncTask<Boolean, Void, List<Interview>>{
 			private ProgressDialog dialog = null;
 			
 			@Override
 			protected void onPreExecute() {
 				dialog = new ProgressDialog(InterviewActivity.this);
 				dialog = ProgressDialog.show(InterviewActivity.this, "", "Loading...", true, false);
-				dialog.setOnDismissListener(new OnDismissListener() {
+				dialog.setOnCancelListener(new OnCancelListener() {
+					
 					@Override
-					public void onDismiss(DialogInterface dialog) {
-						dialog.cancel();
+					public void onCancel(DialogInterface dialog) {
+						InterviewTask.this.cancel(true);
+						InterviewActivity.this.finish();
 					}
 				});
 				dialog.show();
 			}
 			
 			@Override
-			protected List<Interview> doInBackground(Void... params) {
+			protected List<Interview> doInBackground(Boolean... params) {
 				JobmineInterface jobmineInterface = getServiceinterface();
 				List<Interview> interviews = new ArrayList<Interview>();
 				
 				try {
 					//If it failed, notify
-					if (!jobmineInterface.getInterviews(isForced)) {
+					if (!jobmineInterface.getInterviews(params[0])) {
 						Common.showNetworkErrorToast (InterviewActivity.this, getServiceinterface().getLastNetworkError());
 					}
 					
@@ -106,9 +107,9 @@ public class InterviewActivity extends BindingActivity {
 					Toast.makeText(InterviewActivity.this, "Login Failed.", Toast.LENGTH_SHORT).show();
 				}
 				
-			};
+			}
 
-		};
+
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class InterviewActivity extends BindingActivity {
 		switch (item.getItemId()) {
 
 		case R.id.refresh:
-			getTask(true).execute();
+			new InterviewTask().execute(true);
 			break;
 		case R.id.applications:
 			Intent intent = new Intent(InterviewActivity.this, MainActivity.class);
