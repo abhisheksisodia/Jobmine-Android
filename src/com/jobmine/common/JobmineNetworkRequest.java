@@ -325,7 +325,7 @@ public class JobmineNetworkRequest {
 			
 			
 			
-			if(!emplyNameList.isEmpty()){
+			if(!titleList.isEmpty()){
 				for (int i = 0; i < emplyNameList.size(); i++) {
 					Interview in = new Interview();
 					in.employerName = emplyNameList.get(i);
@@ -356,7 +356,7 @@ public class JobmineNetworkRequest {
 				}
 			}
 
-			if(!gEmplyNameList.isEmpty()) {
+			if(!gTitleList.isEmpty()) {
 				for (int i = 0; i < gEmplyNameList.size(); i++) {
 					Interview in = new Interview();
 					SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
