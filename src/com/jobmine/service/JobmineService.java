@@ -3,11 +3,14 @@ package com.jobmine.service;
 import java.util.ArrayList;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.jobmine.common.Common;
+import com.jobmine.common.Constants;
+import com.jobmine.common.EncryptedSharedPreferences;
 import com.jobmine.common.JobmineNetworkRequest;
 import com.jobmine.common.Logger;
 import com.jobmine.models.Interview;
@@ -102,7 +105,12 @@ public class JobmineService extends Service {
 
 		// Perform necessary action for updates
 		if (startReason == JobmineAlarmManager.START_SERVICE_FOR_UPDATES) {
-			beginUpdate ();
+			
+			//Don't pull if you don't even have an account to pull from.
+			EncryptedSharedPreferences settings = new EncryptedSharedPreferences(this, this.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE));
+			if(settings.contains(Constants.pwdKey) && settings.contains(Constants.userNameKey)){
+				beginUpdate ();
+			}	
 		}
 
 		return super.onStartCommand(intent, flags, startId);
