@@ -2,7 +2,7 @@ Jobmine-Android
 ===============
 
 A really basic jobmine viewer for android, uses HTML parsing to scrape all applications, as well as job details from the Jobmine site.
-Uses Jsoup for HTML parsing, [Encrypted SharedPreference Wrapper](http://stackoverflow.com/questions/785973/what-is-the-most-appropriate-way-to-store-user-settings-in-android-application) for persistent configuration file storage, and SherlockActionbar for a more ICS-like UI. 
+Uses Jsoup for HTML parsing, [Encrypted SharedPreference Wrapper](http://stackoverflow.com/questions/785973/what-is-the-most-appropriate-way-to-store-user-settings-in-android-application) for persistent configuration file storage.
 
 TODO
 ====
@@ -11,6 +11,7 @@ TODO
 * Increase connection speed
 * Be able to select interview times
 * Be able to search for jobs and apply to them
+
 
 Open Source Licences
 ====================

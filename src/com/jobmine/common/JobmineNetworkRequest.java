@@ -159,7 +159,7 @@ public class JobmineNetworkRequest {
 				} else if (c.get(i).id().contains("UW_CO_JOBAPP_CT_UW_CO_MAX_RESUMES") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
 					tempJob.resumes = c.get(i).ownText();
 					
-				} else if (c.get(i).id().contains("UW_CO_JOBAPP_D2_UW_CO_ALL_TEXT") && c.get(i).hasText()) {
+				} else if (c.get(i).id().contains("UW_CO_PDF_LINKS_UW_CO_PACKAGE_VIEW") && c.get(i).hasText()) {
 					jobies.add(tempJob);
 					tempJob = new Job();
 				}
