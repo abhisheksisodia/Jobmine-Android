@@ -65,7 +65,7 @@ public class InterviewActivity extends BindingActivity {
 			@Override
 			protected void onPreExecute() {
 				dialog = new ProgressDialog(InterviewActivity.this);
-				dialog = ProgressDialog.show(InterviewActivity.this, "", "Loading...", true, true);
+				dialog = ProgressDialog.show(InterviewActivity.this, "", "Loading...", true, false);
 				dialog.setOnCancelListener(new OnCancelListener() {
 					
 					@Override

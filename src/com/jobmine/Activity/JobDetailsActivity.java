@@ -42,7 +42,7 @@ public class JobDetailsActivity extends BindingActivity {
 		@Override
 		protected void onPreExecute() {
 			dialog = new ProgressDialog(JobDetailsActivity.this);
-			dialog = ProgressDialog.show(JobDetailsActivity.this, "", "Loading...", true, true);
+			dialog = ProgressDialog.show(JobDetailsActivity.this, "", "Loading...", true, false);
 			dialog.setOnCancelListener(new OnCancelListener() {
 				
 				@Override

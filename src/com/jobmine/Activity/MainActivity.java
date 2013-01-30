@@ -59,7 +59,7 @@ public class MainActivity extends BindingActivity {
 		@Override
 		protected void onPreExecute() {
 			dialog = new ProgressDialog(MainActivity.this);
-			dialog = ProgressDialog.show(MainActivity.this, "", "Loading...", true, true);
+			dialog = ProgressDialog.show(MainActivity.this, "", "Loading...", true, false);
 			dialog.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
