@@ -361,7 +361,7 @@ public class JobmineNetworkRequest {
 				for (int i = 0; i < gEmplyNameList.size(); i++) {
 					Interview in = new Interview();
 					SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-					in.type = typeList.get(i);
+					in.type = "Group";
 					in.employerName = gEmplyNameList.get(i);
 					in.title = gTitleList.get(i);
 					in.date = gDateList.get(i);
