@@ -98,6 +98,9 @@ public class JobmineService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		//Logger.d("Service onStartCommand() was called");
 		
+		if(intent == null){
+			return super.onStartCommand(intent, flags, startId);
+		}
 		//Get the start reason if it exists
 		if (intent.hasExtra(JobmineAlarmManager.START_SERVICE_REASON)) {
 			startReason = intent.getExtras().getInt(JobmineAlarmManager.START_SERVICE_REASON);

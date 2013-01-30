@@ -1,17 +1,22 @@
 package com.jobmine.Activity;
 
 import java.net.URLEncoder;
+import java.util.regex.Pattern;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -110,18 +115,21 @@ public class JobDetailsActivity extends BindingActivity {
 
 	private void loadUI (final Job currentJob) {
 		//Load job info
+
+		
 		TextView titleView = (TextView)findViewById(R.id.title);
 		TextView employerView = (TextView)findViewById(R.id.employer);
 		TextView jobStatusView = (TextView)findViewById(R.id.jobstatus);
 		TextView appStatusView = (TextView)findViewById(R.id.appstatus);
 		TextView resumeView = (TextView)findViewById(R.id.resumes);
-		
 		titleView.setText(currentJob.title);
 		employerView.setText(currentJob.emplyer);
+		//wow this is bad, let's find a better way of doing this...
+		Linkify.addLinks(employerView, Pattern.compile(".*"), "http://google.com/search?q=");
 		jobStatusView.setText(Common.getJobAppStatusString(currentJob.jobStatus));
 		appStatusView.setText(Common.getJobAppStatusString(currentJob.appStatus));
 		resumeView.setText(currentJob.resumes+" Applicants");
-		
+
 		employerView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

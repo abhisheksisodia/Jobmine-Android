@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import com.jobmine.providers.JobmineProviderConstants;
 
-public class Job implements Parcelable {
+public class Job implements Parcelable,Comparable<Job> {
 	
 	public String title = "";
 	public String id = "";
@@ -36,6 +36,14 @@ public class Job implements Parcelable {
 		description = c.getString(c.getColumnIndex(JobmineProviderConstants.ApplicationsColumns.JOB_DESCRIPTION));
 	}
 	
+	@Override
+	public String toString() {
+		return "Job [title=" + title + ", id=" + id + ", emplyer=" + emplyer
+				+ ", job=" + job + ", jobStatus=" + jobStatus + ", appStatus="
+				+ appStatus + ", resumes=" + resumes + ", description="
+				+ description + "]";
+	}
+
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(title);
 		dest.writeString(id);
@@ -72,5 +80,11 @@ public class Job implements Parcelable {
 	@Override
 	public int describeContents() {
 		return 0;
+	}
+
+	@Override
+	public int compareTo(Job another) {
+		
+		return this.emplyer.trim().compareToIgnoreCase(another.emplyer.trim());
 	}
 }

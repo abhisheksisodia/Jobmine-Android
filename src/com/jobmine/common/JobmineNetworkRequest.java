@@ -159,7 +159,8 @@ public class JobmineNetworkRequest {
 				} else if (c.get(i).id().contains("UW_CO_JOBAPP_CT_UW_CO_MAX_RESUMES") && (c.get(i).id().contains("$$")) && c.get(i).hasText()) {
 					tempJob.resumes = c.get(i).ownText();
 					
-				} else if (c.get(i).id().contains("UW_CO_PDF_LINKS_UW_CO_PACKAGE_VIEW") && c.get(i).hasText()) {
+				}
+				else if (c.get(i).id().contains("UW_CO_PDF_LINKS_UW_CO_PACKAGE_VIEW") && c.get(i).hasText()) {
 					jobies.add(tempJob);
 					tempJob = new Job();
 				}
@@ -360,7 +361,7 @@ public class JobmineNetworkRequest {
 				for (int i = 0; i < gEmplyNameList.size(); i++) {
 					Interview in = new Interview();
 					SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
-					in.type = "Group";
+					in.type = typeList.get(i);
 					in.employerName = gEmplyNameList.get(i);
 					in.title = gTitleList.get(i);
 					in.date = gDateList.get(i);

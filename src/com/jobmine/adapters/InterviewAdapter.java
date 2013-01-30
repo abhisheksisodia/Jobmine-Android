@@ -142,7 +142,7 @@ public class InterviewAdapter extends BaseAdapter {
 				v = LayoutInflater.from(context).inflate(R.layout.interview_header, null);
 			}
 			if (position == 0) {
-				((TextView) v).setText("In Person Interviews");
+				((TextView) v).setText("Interviews");
 			} else if (position == normalInterview.size() + 1) {
 				((TextView) v).setText("Group Interviews");
 			}

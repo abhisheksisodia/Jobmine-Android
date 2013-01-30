@@ -1,6 +1,8 @@
 package com.jobmine.adapters;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -101,6 +103,9 @@ public class JobAdapter extends BaseAdapter {
 
 	public void setContentFiltered(List<Job> list, boolean applied, boolean selected, boolean notSelected, boolean ranking) {
 		jobies.clear();
+		
+		Collections.sort(jobies);
+		
 		for (Job job : list) {
 			int status = job.appStatus;
 			if (applied && status == Constants.STATUS_APPLIED) {
@@ -124,4 +129,6 @@ public class JobAdapter extends BaseAdapter {
 		TextView resumesText;
 		View sideColour;
 	}
+	
+	
 }
